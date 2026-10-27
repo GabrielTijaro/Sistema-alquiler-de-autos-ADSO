@@ -1,4 +1,3 @@
-
 DROP DATABASE IF EXISTS vehicle_rental;
 CREATE DATABASE vehicle_rental CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE vehicle_rental;
@@ -36,16 +35,23 @@ CREATE TABLE customers (
 );
 
 
+CREATE TABLE vehicle_types (
+    id          INT AUTO_INCREMENT PRIMARY KEY,
+    name        VARCHAR(50) NOT NULL,
+    CONSTRAINT uq_vehicle_types_name UNIQUE (name)
+);
+
+
 CREATE TABLE vehicles (
-    plate       VARCHAR(10)   PRIMARY KEY,
-    company_id  INT           NOT NULL,
-    brand       VARCHAR(50)   NOT NULL,
-    model       VARCHAR(50)   NOT NULL,
-    category    VARCHAR(20)   NOT NULL,
-    daily_rate  DECIMAL(10,2) NOT NULL,
-    status      VARCHAR(20)   NOT NULL DEFAULT 'AVAILABLE',
-    CONSTRAINT fk_vehicles_company FOREIGN KEY (company_id) REFERENCES companies (id),
-    CONSTRAINT ck_vehicles_category CHECK (category IN ('ECONOMY', 'MID_RANGE', 'LUXURY')),
+    plate            VARCHAR(10)   PRIMARY KEY,
+    company_id       INT           NOT NULL,
+    brand            VARCHAR(50)   NOT NULL,
+    model            VARCHAR(50)   NOT NULL,
+    vehicle_type_id  INT           NOT NULL,
+    daily_rate       DECIMAL(10,2) NOT NULL,
+    status           VARCHAR(20)   NOT NULL DEFAULT 'AVAILABLE',
+    CONSTRAINT fk_vehicles_company      FOREIGN KEY (company_id)      REFERENCES companies (id),
+    CONSTRAINT fk_vehicles_vehicle_type FOREIGN KEY (vehicle_type_id) REFERENCES vehicle_types (id),
     CONSTRAINT ck_vehicles_status   CHECK (status IN ('AVAILABLE', 'RENTED')),
     CONSTRAINT ck_vehicles_rate_positive CHECK (daily_rate > 0)               -- RF-01, HU-01
 );
@@ -127,11 +133,16 @@ INSERT INTO users (company_id, full_name, username, password_hash, role) VALUES
 (1, 'Carlos Rojas', 'crojas',  '$2a$10$examplehash2', 'EMPLOYEE'),
 (1, 'Diana Torres', 'dtorres', '$2a$10$examplehash3', 'CASHIER');
 
-INSERT INTO vehicles (plate, company_id, brand, model, category, daily_rate, status) VALUES
-('ABC123', 1, 'Chevrolet', 'Spark',   'ECONOMY',   90000.00,  'AVAILABLE'),
-('DEF456', 1, 'Mazda',     'CX-30',   'MID_RANGE', 150000.00, 'AVAILABLE'),
-('GHI789', 1, 'BMW',       'Serie 4', 'LUXURY',    350000.00, 'AVAILABLE'),
-('JKL012', 1, 'Renault',   'Logan',   'ECONOMY',   85000.00,  'RENTED');
+INSERT INTO vehicle_types (name) VALUES
+('ECONOMY'),
+('MID_RANGE'),
+('LUXURY');
+
+INSERT INTO vehicles (plate, company_id, brand, model, vehicle_type_id, daily_rate, status) VALUES
+('ABC123', 1, 'Chevrolet', 'Spark',   1, 90000.00,  'AVAILABLE'),
+('DEF456', 1, 'Mazda',     'CX-30',   2, 150000.00, 'AVAILABLE'),
+('GHI789', 1, 'BMW',       'Serie 4', 3, 350000.00, 'AVAILABLE'),
+('JKL012', 1, 'Renault',   'Logan',   1, 85000.00,  'RENTED');
 
 INSERT INTO customers (document_number, full_name, phone, address) VALUES
 ('1075634521', 'Andrés Felipe Cuellar', '3124567890', 'Cra 5 # 10-20, Neiva'),
@@ -152,4 +163,3 @@ INSERT INTO penalties (rental_id, daily_penalty_rate) VALUES (2, 50000.00);
 INSERT INTO invoices (rental_id, issue_date, luxury_surcharge) VALUES
 (1, '2026-09-04', 0.00),
 (2, '2026-09-10', 100000.00);
-
