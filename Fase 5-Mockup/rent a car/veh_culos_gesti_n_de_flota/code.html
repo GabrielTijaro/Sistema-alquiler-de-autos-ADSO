@@ -81,6 +81,7 @@
 <option value="ALL">Todos los estados</option>
 <option value="Disponible">Disponible</option>
 <option value="Alquilado">Alquilado</option>
+<option value="Inactivo">Inactivo / De baja</option>
 </select>
 <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-outline">
 <span class="material-symbols-outlined text-[18px]">expand_more</span>
@@ -163,10 +164,16 @@
               </span>
 </td>
 <td class="py-4 px-6 text-right">
+<div class="flex items-center justify-end gap-2">
 <a class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-surface-container-low hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-colors" href="../registrar_editar_veh_culo/code.html" title="Editar vehículo ABC123">
 <span class="material-symbols-outlined text-[16px] text-primary">edit</span>
 <span class="">Editar</span>
 </a>
+<button class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-error-container/30 hover:bg-error-container text-error font-label-md text-label-md transition-colors" onclick="openDeactivateModal('ABC123', 'Chevrolet Spark')" title="Dar de baja / Inactivar vehículo ABC123" type="button">
+<span class="material-symbols-outlined text-[16px]">block</span>
+<span class="">Dar de baja</span>
+</button>
+</div>
 </td>
 </tr>
 <!-- Row 2: Mazda CX-30 -->
@@ -206,10 +213,16 @@
               </span>
 </td>
 <td class="py-4 px-6 text-right">
+<div class="flex items-center justify-end gap-2">
 <a class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-surface-container-low hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-colors" href="../registrar_editar_veh_culo/code.html" title="Editar vehículo DEF456">
 <span class="material-symbols-outlined text-[16px] text-primary">edit</span>
 <span class="">Editar</span>
 </a>
+<button class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-error-container/30 hover:bg-error-container text-error font-label-md text-label-md transition-colors" onclick="openDeactivateModal('DEF456', 'Mazda CX-30')" title="Dar de baja / Inactivar vehículo DEF456" type="button">
+<span class="material-symbols-outlined text-[16px]">block</span>
+<span class="">Dar de baja</span>
+</button>
+</div>
 </td>
 </tr>
 <!-- Row 3: BMW Serie 4 -->
@@ -249,10 +262,16 @@
               </span>
 </td>
 <td class="py-4 px-6 text-right">
+<div class="flex items-center justify-end gap-2">
 <a class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-surface-container-low hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-colors" href="../registrar_editar_veh_culo/code.html" title="Editar vehículo GHI789">
 <span class="material-symbols-outlined text-[16px] text-primary">edit</span>
 <span class="">Editar</span>
 </a>
+<button class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-error-container/30 hover:bg-error-container text-error font-label-md text-label-md transition-colors" onclick="openDeactivateModal('GHI789', 'BMW Serie 4')" title="Dar de baja / Inactivar vehículo GHI789" type="button">
+<span class="material-symbols-outlined text-[16px]">block</span>
+<span class="">Dar de baja</span>
+</button>
+</div>
 </td>
 </tr>
 <!-- Row 4: Renault Logan -->
@@ -292,10 +311,16 @@
               </span>
 </td>
 <td class="py-4 px-6 text-right">
+<div class="flex items-center justify-end gap-2">
 <a class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-surface-container-low hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-colors" href="../registrar_editar_veh_culo/code.html" title="Editar vehículo JKL012">
 <span class="material-symbols-outlined text-[16px] text-primary">edit</span>
 <span class="">Editar</span>
 </a>
+<button class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-surface-container text-outline font-label-md text-label-md opacity-40 cursor-not-allowed" disabled title="No se puede dar de baja: vehículo en contrato activo" type="button">
+<span class="material-symbols-outlined text-[16px]">block</span>
+<span class="">Dar de baja</span>
+</button>
+</div>
 </td>
 </tr>
 </tbody>
@@ -374,6 +399,32 @@
 </div>
 </div>
 </div>
+
+<!-- Modal: Confirmar Retiro / Baja de Vehículo (HU-03) -->
+<div aria-labelledby="modalDeactivateTitle" aria-modal="true" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-inverse-surface/50 backdrop-blur-sm" id="deactivateModal" role="dialog">
+  <div class="bg-surface-container-lowest rounded-xl shadow-2xl max-w-md w-full overflow-hidden p-6 space-y-4">
+    <div class="flex items-start gap-3">
+      <div class="w-10 h-10 rounded-full bg-error-container flex items-center justify-center text-error shrink-0">
+        <span class="material-symbols-outlined text-[24px]">warning</span>
+      </div>
+      <div>
+        <h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold" id="modalDeactivateTitle">¿Dar de baja vehículo?</h3>
+        <p class="font-body-sm text-body-sm text-on-surface-variant mt-1" id="modalDeactivateDesc">
+          El vehículo pasará a estado Inactivo. No estará disponible para nuevos contratos, pero se conservará su historial para auditoría y facturación.
+        </p>
+      </div>
+    </div>
+    <div class="flex items-center justify-end gap-2 pt-2">
+      <button class="px-4 py-2 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface font-label-md text-label-md" onclick="closeDeactivateModal()" type="button">
+        Cancelar
+      </button>
+      <button class="px-4 py-2 rounded-lg bg-error hover:bg-on-error-container text-on-error font-label-md text-label-md font-semibold" id="btnConfirmDeactivate" type="button">
+        Confirmar baja
+      </button>
+    </div>
+  </div>
+</div>
+
 <script>
   (function() {
     const searchInput = document.getElementById('searchInput');
@@ -441,6 +492,48 @@
         searchInput.focus();
         searchInput.select();
       }
+    });
+
+    // Modal de confirmación de retiro / baja lógica (HU-03)
+    let targetPlateToDeactivate = null;
+    const modal = document.getElementById('deactivateModal');
+    const modalDesc = document.getElementById('modalDeactivateDesc');
+    const confirmBtn = document.getElementById('btnConfirmDeactivate');
+
+    window.openDeactivateModal = function(plate, vehicleName) {
+      targetPlateToDeactivate = plate;
+      modalDesc.textContent = `¿Confirmas que deseas dar de baja el vehículo ${vehicleName} (Placa ${plate})? Pasará a estado Inactivo y no estará disponible para nuevos alquileres, conservando su historial de facturación.`;
+      modal.classList.remove('hidden');
+    };
+
+    window.closeDeactivateModal = function() {
+      modal.classList.add('hidden');
+      targetPlateToDeactivate = null;
+    };
+
+    confirmBtn.addEventListener('click', () => {
+      if (!targetPlateToDeactivate) return;
+      const row = document.querySelector(`.vehicle-row[data-plate="${targetPlateToDeactivate}"]`);
+      if (row) {
+        row.setAttribute('data-status', 'Inactivo');
+        const statusCell = row.querySelector('td:nth-child(6)');
+        if (statusCell) {
+          statusCell.innerHTML = `
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-label-sm font-label-sm bg-surface-container-highest text-on-surface-variant">
+              <span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+              Inactivo
+            </span>`;
+        }
+        const actionBtn = row.querySelector('button[onclick*="openDeactivateModal"]');
+        if (actionBtn) {
+          actionBtn.disabled = true;
+          actionBtn.className = 'inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-surface-container text-outline font-label-md text-label-md opacity-40 cursor-not-allowed';
+          actionBtn.removeAttribute('onclick');
+          actionBtn.title = 'Vehículo dado de baja';
+        }
+        applyFilters();
+      }
+      closeDeactivateModal();
     });
   })();
 </script></main></div>

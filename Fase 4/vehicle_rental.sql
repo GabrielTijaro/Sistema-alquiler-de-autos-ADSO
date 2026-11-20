@@ -52,8 +52,8 @@ CREATE TABLE vehicles (
     status           VARCHAR(20)   NOT NULL DEFAULT 'AVAILABLE',
     CONSTRAINT fk_vehicles_company      FOREIGN KEY (company_id)      REFERENCES companies (id),
     CONSTRAINT fk_vehicles_vehicle_type FOREIGN KEY (vehicle_type_id) REFERENCES vehicle_types (id),
-    CONSTRAINT ck_vehicles_status   CHECK (status IN ('AVAILABLE', 'RENTED')),
-    CONSTRAINT ck_vehicles_rate_positive CHECK (daily_rate > 0)               -- RF-01, HU-01
+    CONSTRAINT ck_vehicles_status   CHECK (status IN ('AVAILABLE', 'RENTED', 'INACTIVE')),
+    CONSTRAINT ck_vehicles_rate_positive CHECK (daily_rate > 0)               -- RF-01, HU-01, HU-03
 );
 
 
