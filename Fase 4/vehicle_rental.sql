@@ -163,3 +163,62 @@ INSERT INTO penalties (rental_id, daily_penalty_rate) VALUES (2, 50000.00);
 INSERT INTO invoices (rental_id, issue_date, luxury_surcharge) VALUES
 (1, '2026-09-04', 0.00),
 (2, '2026-09-10', 100000.00);
+
+
+-- ============================================================================
+-- CONSULTAS DE VERIFICACIÓN Y AUDITORÍA (CONSISTENCIA CON RFs Y HUs)
+-- ============================================================================
+
+-- Consulta 1: Búsqueda parcial de vehículos disponibles por marca, modelo o placa (RF-02, HU-02)
+-- Permite al operador consultar la flota disponible filtrando por coincidencias parciales de texto.
+SELECT v.plate,
+       v.brand,
+       v.model,
+       vt.name AS vehicle_type,
+       v.daily_rate,
+       v.status
+FROM vehicles v
+JOIN vehicle_types vt ON v.vehicle_type_id = vt.id
+WHERE v.status = 'AVAILABLE'
+  AND (v.brand LIKE '%Mazda%' OR v.model LIKE '%Spark%' OR v.plate LIKE '%ABC%');
+
+-- Consulta 2: Búsqueda predictiva de clientes por coincidencia en nombre o documento (RF-03, HU-04, HU-05)
+-- Soporta la búsqueda asistida en el formulario de nuevos contratos sin exigir digitación manual exacta.
+SELECT document_number,
+       full_name,
+       phone,
+       address
+FROM customers
+WHERE full_name LIKE '%Andrés%'
+   OR document_number LIKE '%1075%';
+
+-- Consulta 3: Verificación de alquileres activos con datos del vehículo, cliente y operador (RF-04, HU-06)
+SELECT r.id AS rental_id,
+       r.start_date,
+       r.due_date,
+       r.return_date,
+       v.plate,
+       CONCAT(v.brand, ' ', v.model) AS vehicle,
+       c.full_name AS customer_name,
+       c.phone AS customer_phone,
+       u.full_name AS operator_name
+FROM rentals r
+JOIN vehicles v    ON r.vehicle_plate = v.plate
+JOIN customers c   ON r.customer_document = c.document_number
+JOIN users u       ON r.user_id = u.id
+WHERE r.return_date IS NULL;
+
+-- Consulta 4: Auditoría de liquidación, recargo de lujo y mora calculada (RF-06, RF-07, HU-09, HU-10)
+-- Valida el cálculo automático de días de mora y recargo mediante la vista consolidada.
+SELECT invoice_id,
+       issue_date,
+       rental_id,
+       customer_document,
+       vehicle_plate,
+       rental_days,
+       subtotal,
+       luxury_surcharge,
+       penalty_total,
+       grand_total
+FROM v_invoice_totals;
+
