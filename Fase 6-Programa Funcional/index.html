@@ -1,0 +1,1551 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Neiva Rent a Car — Sistema de Gestión Operativa (Fase 6)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#0037b0",
+            "primary-container": "#1d4ed8",
+            "on-primary": "#ffffff",
+            "primary-fixed": "#dce1ff",
+            background: "#faf8ff",
+            surface: "#ffffff",
+            "surface-container": "#eaedff",
+            "surface-container-low": "#f2f3ff",
+            "surface-container-high": "#e2e7ff",
+            "surface-container-lowest": "#ffffff",
+            "on-surface": "#131b2e",
+            "on-surface-variant": "#434655",
+            outline: "#747686",
+            "outline-variant": "#c4c5d7",
+            error: "#ba1a1a",
+            "error-container": "#ffdad6",
+            "on-error-container": "#93000a",
+            success: "#15803d",
+            "success-container": "#dcfce7",
+            warning: "#b45309",
+            "warning-container": "#fef3c7"
+          },
+          fontFamily: {
+            sans: ["Inter", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    @media print {
+      body * { visibility: hidden; }
+      #invoiceModal, #invoiceModal * { visibility: visible; }
+      #invoiceModal { position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 0; background: white; box-shadow: none; }
+      .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface font-sans antialiased selection:bg-primary-fixed selection:text-primary">
+
+  <!-- ========================================== -->
+  <!-- VISTA 1: INICIO DE SESIÓN (LOGIN HU-00)     -->
+  <!-- ========================================== -->
+  <div id="loginView" class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-gradient-to-br from-primary-fixed/20 via-background to-surface-container-high/40">
+    <div class="w-full max-w-md bg-surface rounded-2xl shadow-xl border border-outline-variant/40 p-8 relative z-10">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-10 h-10 rounded-xl bg-primary text-on-primary flex items-center justify-center shadow-md">
+          <span class="material-symbols-outlined text-2xl">directions_car</span>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold text-on-surface leading-tight">Neiva Rent a Car</h1>
+          <p class="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Gestión Operativa • Huila</p>
+        </div>
+      </div>
+
+      <div class="bg-surface-container-low p-3.5 rounded-xl border border-outline-variant/30 mb-6">
+        <p class="text-xs text-on-surface font-semibold mb-2 flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-sm text-primary">badge</span>
+          Acceso rápido por perfil:
+        </p>
+        <div class="grid grid-cols-3 gap-2">
+          <button onclick="fillLogin('lmendez', 'admin123')" class="px-2 py-1.5 bg-surface rounded-lg text-left border border-outline-variant/40 hover:border-primary hover:bg-primary-fixed/30 transition-all">
+            <span class="block text-[11px] font-bold text-primary">Admin</span>
+            <span class="block text-[10px] text-on-surface-variant">Laura M.</span>
+          </button>
+          <button onclick="fillLogin('crojas', 'emp123')" class="px-2 py-1.5 bg-surface rounded-lg text-left border border-outline-variant/40 hover:border-primary hover:bg-primary-fixed/30 transition-all">
+            <span class="block text-[11px] font-bold text-primary">Asesor</span>
+            <span class="block text-[10px] text-on-surface-variant">Carlos R.</span>
+          </button>
+          <button onclick="fillLogin('dtorres', 'cash123')" class="px-2 py-1.5 bg-surface rounded-lg text-left border border-outline-variant/40 hover:border-primary hover:bg-primary-fixed/30 transition-all">
+            <span class="block text-[11px] font-bold text-primary">Cajera</span>
+            <span class="block text-[10px] text-on-surface-variant">Diana T.</span>
+          </button>
+        </div>
+      </div>
+
+      <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-on-surface mb-1">Usuario</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3 top-2.5 text-on-surface-variant text-lg">person</span>
+            <input type="text" id="loginUsername" required class="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-outline-variant focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" placeholder="ej. lmendez"/>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-on-surface mb-1">Contraseña</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3 top-2.5 text-on-surface-variant text-lg">lock</span>
+            <input type="password" id="loginPassword" required class="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-outline-variant focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" placeholder="••••••••"/>
+          </div>
+        </div>
+        <div id="loginError" class="hidden p-2 rounded-lg bg-error-container text-on-error-container text-xs font-medium">
+          Credenciales incorrectas. Verifique e intente de nuevo.
+        </div>
+        <button type="submit" class="w-full py-2.5 bg-primary hover:bg-primary-container text-on-primary font-semibold text-sm rounded-lg transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+          <span>Ingresar al Sistema</span>
+          <span class="material-symbols-outlined text-lg">arrow_forward</span>
+        </button>
+      </form>
+
+      <div class="mt-6 pt-4 border-t border-outline-variant/30 text-center">
+        <span class="text-[11px] text-on-surface-variant font-medium">© 2026 Neiva Rent a Car • Neiva, Huila</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- VISTA 2: APLICACIÓN PRINCIPAL (APP SHELL)   -->
+  <!-- ========================================== -->
+  <div id="appShell" class="hidden min-h-screen flex flex-col">
+
+    <!-- Backdrop Móvil -->
+    <div id="sidebarBackdrop" onclick="toggleSidebar(false)" class="hidden fixed inset-0 bg-on-surface/40 backdrop-blur-xs z-30 md:hidden"></div>
+
+    <!-- Barra Lateral (Sidebar Drawer) -->
+    <aside id="sidebar" class="fixed top-0 left-0 bottom-0 w-[260px] bg-surface border-r border-outline-variant/40 flex flex-col z-40 transition-transform duration-200 -translate-x-full md:translate-x-0">
+      <div class="h-16 px-4 flex items-center justify-between border-b border-outline-variant/30">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-primary text-on-primary flex items-center justify-center shadow-sm">
+            <span class="material-symbols-outlined text-xl">directions_car</span>
+          </div>
+          <div>
+            <span class="block font-bold text-sm text-on-surface leading-tight">Neiva Rent</span>
+            <span class="block text-[10px] text-on-surface-variant uppercase font-medium">Sede Principal</span>
+          </div>
+        </div>
+        <button onclick="toggleSidebar(false)" class="md:hidden p-1 rounded-lg text-on-surface-variant hover:bg-surface-container">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <div class="px-4 pt-4 pb-2">
+        <span class="text-[11px] font-bold text-outline uppercase tracking-wider">Módulos del Sistema</span>
+      </div>
+
+      <nav class="flex-1 px-3 space-y-1">
+        <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors bg-surface-container text-primary">
+          <span class="material-symbols-outlined text-xl">dashboard</span>
+          <span>Panel de Control</span>
+        </button>
+        <button onclick="switchTab('fleet')" id="nav-fleet" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors">
+          <span class="material-symbols-outlined text-xl">directions_car</span>
+          <span>Gestión de Flota</span>
+        </button>
+        <button onclick="switchTab('customers')" id="nav-customers" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors">
+          <span class="material-symbols-outlined text-xl">group</span>
+          <span>Clientes</span>
+        </button>
+        <button onclick="switchTab('rentals')" id="nav-rentals" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors">
+          <span class="material-symbols-outlined text-xl">key</span>
+          <span>Alquileres y Contratos</span>
+        </button>
+        <button onclick="switchTab('invoices')" id="nav-invoices" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors">
+          <span class="material-symbols-outlined text-xl">receipt_long</span>
+          <span>Facturación</span>
+        </button>
+      </nav>
+
+      <!-- Resumen de Sede en la parte inferior -->
+      <div class="p-3 border-t border-outline-variant/30 bg-surface-container-low/50">
+        <div class="flex items-center justify-between text-xs">
+          <div>
+            <span class="block font-semibold text-on-surface">Huila, Colombia</span>
+            <span class="block text-[11px] text-on-surface-variant">Tarifas en COP ($)</span>
+          </div>
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-success-container text-success">EN LÍNEA</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Contenedor Principal (con margen izquierdo para el sidebar en desktop) -->
+    <div class="pl-0 md:pl-[260px] flex-1 flex flex-col">
+
+      <!-- Header Superior -->
+      <header class="h-16 bg-surface/95 backdrop-blur-md border-b border-outline-variant/40 px-4 md:px-8 flex items-center justify-between sticky top-0 z-20 shadow-xs">
+        <div class="flex items-center gap-3">
+          <button onclick="toggleSidebar(true)" class="md:hidden p-2 rounded-lg text-on-surface hover:bg-surface-container">
+            <span class="material-symbols-outlined text-2xl">menu</span>
+          </button>
+          <div class="hidden sm:block">
+            <h2 id="headerTitle" class="text-base font-bold text-on-surface leading-tight">Panel de Control Operativo</h2>
+            <p class="text-xs text-on-surface-variant">Sede Principal • Neiva, Huila</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <div class="text-right hidden sm:block">
+            <span id="userNameBadge" class="block text-sm font-semibold text-on-surface leading-tight">Laura Méndez</span>
+            <span id="userRoleBadge" class="block text-[11px] font-bold text-primary">ADMINISTRADOR</span>
+          </div>
+          <div class="w-9 h-9 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-sm shadow-sm" id="userAvatar">
+            LM
+          </div>
+          <button onclick="handleLogout()" title="Cerrar sesión" class="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error-container transition-colors">
+            <span class="material-symbols-outlined text-xl">logout</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Área de Contenido Dinámico -->
+      <main class="flex-1 p-4 md:p-8 max-w-7xl w-full mx-auto space-y-6">
+
+        <!-- ===================================== -->
+        <!-- SECCIÓN 1: DASHBOARD                  -->
+        <!-- ===================================== -->
+        <section id="tab-dashboard" class="space-y-6">
+          <!-- Alerta de Operación -->
+          <div id="moraAlertBanner" class="hidden p-4 rounded-xl bg-error-container text-on-error-container border border-error/30 flex items-center justify-between shadow-xs">
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-2xl animate-pulse">warning</span>
+              <div>
+                <span class="font-bold text-sm block">Alerta de Devoluciones en Mora</span>
+                <span class="text-xs" id="moraAlertText">Hay 1 vehículo con retraso en la entrega pactada.</span>
+              </div>
+            </div>
+            <button onclick="switchTab('rentals')" class="px-3 py-1.5 bg-error text-white text-xs font-semibold rounded-lg hover:bg-error/90 transition-all">
+              Revisar Alquileres
+            </button>
+          </div>
+
+          <!-- Tarjetas KPI -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-surface p-5 rounded-xl border border-outline-variant/40 shadow-xs flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl bg-primary-fixed text-primary flex items-center justify-center">
+                <span class="material-symbols-outlined text-2xl">commute</span>
+              </div>
+              <div>
+                <span class="text-xs text-on-surface-variant font-medium block">Flota Total</span>
+                <span id="kpiTotalVehicles" class="text-2xl font-bold text-on-surface">5</span>
+              </div>
+            </div>
+            <div class="bg-surface p-5 rounded-xl border border-outline-variant/40 shadow-xs flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl bg-success-container text-success flex items-center justify-center">
+                <span class="material-symbols-outlined text-2xl">check_circle</span>
+              </div>
+              <div>
+                <span class="text-xs text-on-surface-variant font-medium block">Disponibles</span>
+                <span id="kpiAvailableVehicles" class="text-2xl font-bold text-success">3</span>
+              </div>
+            </div>
+            <div class="bg-surface p-5 rounded-xl border border-outline-variant/40 shadow-xs flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl bg-surface-container text-primary flex items-center justify-center">
+                <span class="material-symbols-outlined text-2xl">key</span>
+              </div>
+              <div>
+                <span class="text-xs text-on-surface-variant font-medium block">Alquileres Activos</span>
+                <span id="kpiActiveRentals" class="text-2xl font-bold text-primary">2</span>
+              </div>
+            </div>
+            <div class="bg-surface p-5 rounded-xl border border-outline-variant/40 shadow-xs flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl bg-warning-container text-warning flex items-center justify-center">
+                <span class="material-symbols-outlined text-2xl">schedule</span>
+              </div>
+              <div>
+                <span class="text-xs text-on-surface-variant font-medium block">En Mora (+retraso)</span>
+                <span id="kpiOverdueRentals" class="text-2xl font-bold text-error">1</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Acciones Rápidas -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <button onclick="openNewRentalModal()" class="p-4 rounded-xl bg-primary text-on-primary flex items-center gap-3 hover:bg-primary-container transition-all shadow-sm">
+              <span class="material-symbols-outlined text-2xl">add_circle</span>
+              <div class="text-left">
+                <span class="block font-bold text-sm">Nuevo Alquiler</span>
+                <span class="block text-xs text-on-primary/80">Crear contrato en 1 minuto</span>
+              </div>
+            </button>
+            <button onclick="openNewVehicleModal()" class="p-4 rounded-xl bg-surface border border-outline-variant/40 text-on-surface hover:bg-surface-container flex items-center gap-3 transition-all shadow-sm">
+              <span class="material-symbols-outlined text-2xl text-primary">directions_car</span>
+              <div class="text-left">
+                <span class="block font-bold text-sm">Registrar Vehículo</span>
+                <span class="block text-xs text-on-surface-variant">Añadir auto a la flota</span>
+              </div>
+            </button>
+            <button onclick="openNewCustomerModal()" class="p-4 rounded-xl bg-surface border border-outline-variant/40 text-on-surface hover:bg-surface-container flex items-center gap-3 transition-all shadow-sm">
+              <span class="material-symbols-outlined text-2xl text-primary">person_add</span>
+              <div class="text-left">
+                <span class="block font-bold text-sm">Nuevo Cliente</span>
+                <span class="block text-xs text-on-surface-variant">Registrar arrendatario</span>
+              </div>
+            </button>
+          </div>
+
+          <!-- Tabla de Actividad Reciente -->
+          <div class="bg-surface rounded-xl border border-outline-variant/40 overflow-hidden shadow-xs">
+            <div class="p-4 border-b border-outline-variant/30 flex items-center justify-between">
+              <h3 class="font-bold text-sm text-on-surface">Alquileres Recientes en Operación</h3>
+              <button onclick="switchTab('rentals')" class="text-xs font-semibold text-primary hover:underline">Ver todos</button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-surface-container-low text-on-surface-variant font-semibold">
+                  <tr>
+                    <th class="p-3">Contrato</th>
+                    <th class="p-3">Vehículo</th>
+                    <th class="p-3">Cliente</th>
+                    <th class="p-3">Entrega Pactada</th>
+                    <th class="p-3">Estado</th>
+                    <th class="p-3 text-right">Acción</th>
+                  </tr>
+                </thead>
+                <tbody id="dashboardRentalsTable" class="divide-y divide-outline-variant/20">
+                  <!-- Se llena dinámicamente -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================================== -->
+        <!-- SECCIÓN 2: GESTIÓN DE FLOTA (HU-01/03)-->
+        <!-- ===================================== -->
+        <section id="tab-fleet" class="hidden space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h3 class="font-bold text-lg text-on-surface">Gestión de Flota Vehicular</h3>
+              <p class="text-xs text-on-surface-variant">Inventario, tarifas COP y disponibilidad de flota</p>
+            </div>
+            <button onclick="openNewVehicleModal()" class="px-4 py-2 bg-primary hover:bg-primary-container text-on-primary text-xs font-semibold rounded-lg flex items-center gap-2 shadow-sm transition-all self-start sm:self-auto">
+              <span class="material-symbols-outlined text-lg">add</span>
+              <span>Registrar Vehículo</span>
+            </button>
+          </div>
+
+          <!-- Filtros de búsqueda (LIKE) -->
+          <div class="bg-surface p-3.5 rounded-xl border border-outline-variant/40 flex flex-col sm:flex-row gap-3 items-center justify-between shadow-xs">
+            <div class="relative w-full sm:w-80">
+              <span class="material-symbols-outlined absolute left-3 top-2.5 text-on-surface-variant text-lg">search</span>
+              <input type="text" id="fleetSearchInput" oninput="renderFleetTable()" placeholder="Buscar por placa, marca o modelo..." class="w-full pl-9 pr-3 py-1.5 text-xs rounded-lg border border-outline-variant focus:outline-none focus:ring-2 focus:ring-primary"/>
+            </div>
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+              <span class="text-xs text-on-surface-variant font-medium">Estado:</span>
+              <select id="fleetStatusFilter" onchange="renderFleetTable()" class="px-2.5 py-1.5 text-xs rounded-lg border border-outline-variant focus:outline-none focus:ring-2 focus:ring-primary bg-surface">
+                <option value="ALL">Todos los estados</option>
+                <option value="AVAILABLE">Disponibles</option>
+                <option value="RENTED">Alquilados</option>
+                <option value="INACTIVE">Inactivos (Baja lógica)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Tabla de Vehículos -->
+          <div class="bg-surface rounded-xl border border-outline-variant/40 overflow-hidden shadow-xs">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-surface-container-low text-on-surface-variant font-semibold">
+                  <tr>
+                    <th class="p-3">Placa</th>
+                    <th class="p-3">Marca y Modelo</th>
+                    <th class="p-3">Gama / Tipo</th>
+                    <th class="p-3">Tarifa Diaria</th>
+                    <th class="p-3">Estado</th>
+                    <th class="p-3 text-right">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="fleetTableBody" class="divide-y divide-outline-variant/20">
+                  <!-- Dinámico -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================================== -->
+        <!-- SECCIÓN 3: CLIENTES (HU-04, HU-05)    -->
+        <!-- ===================================== -->
+        <section id="tab-customers" class="hidden space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h3 class="font-bold text-lg text-on-surface">Base de Arrendatarios y Clientes</h3>
+              <p class="text-xs text-on-surface-variant">Registro y consulta de clientes autorizados</p>
+            </div>
+            <button onclick="openNewCustomerModal()" class="px-4 py-2 bg-primary hover:bg-primary-container text-on-primary text-xs font-semibold rounded-lg flex items-center gap-2 shadow-sm transition-all self-start sm:self-auto">
+              <span class="material-symbols-outlined text-lg">person_add</span>
+              <span>Nuevo Cliente</span>
+            </button>
+          </div>
+
+          <div class="bg-surface p-3.5 rounded-xl border border-outline-variant/40 flex items-center gap-3 shadow-xs">
+            <span class="material-symbols-outlined text-on-surface-variant text-lg">search</span>
+            <input type="text" id="customerSearchInput" oninput="renderCustomersTable()" placeholder="Buscar por cédula o nombre..." class="w-full text-xs focus:outline-none"/>
+          </div>
+
+          <div class="bg-surface rounded-xl border border-outline-variant/40 overflow-hidden shadow-xs">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-surface-container-low text-on-surface-variant font-semibold">
+                  <tr>
+                    <th class="p-3">Cédula / ID</th>
+                    <th class="p-3">Nombre Completo</th>
+                    <th class="p-3">Teléfono</th>
+                    <th class="p-3">Dirección</th>
+                    <th class="p-3">Historial</th>
+                  </tr>
+                </thead>
+                <tbody id="customersTableBody" class="divide-y divide-outline-variant/20">
+                  <!-- Dinámico -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================================== -->
+        <!-- SECCIÓN 4: ALQUILERES (HU-06 A HU-09) -->
+        <!-- ===================================== -->
+        <section id="tab-rentals" class="hidden space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h3 class="font-bold text-lg text-on-surface">Contratos de Alquiler y Control de Mora</h3>
+              <p class="text-xs text-on-surface-variant">Gestión de salidas, extensiones de plazo y liquidación de retrasos</p>
+            </div>
+            <button onclick="openNewRentalModal()" class="px-4 py-2 bg-primary hover:bg-primary-container text-on-primary text-xs font-semibold rounded-lg flex items-center gap-2 shadow-sm transition-all self-start sm:self-auto">
+              <span class="material-symbols-outlined text-lg">add_circle</span>
+              <span>Crear Nuevo Contrato</span>
+            </button>
+          </div>
+
+          <div class="bg-surface rounded-xl border border-outline-variant/40 overflow-hidden shadow-xs">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-surface-container-low text-on-surface-variant font-semibold">
+                  <tr>
+                    <th class="p-3">ID</th>
+                    <th class="p-3">Vehículo</th>
+                    <th class="p-3">Cliente</th>
+                    <th class="p-3">Fecha Inicio</th>
+                    <th class="p-3">Entrega Pactada</th>
+                    <th class="p-3">Estado / Mora</th>
+                    <th class="p-3 text-right">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="rentalsTableBody" class="divide-y divide-outline-variant/20">
+                  <!-- Dinámico -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================================== -->
+        <!-- SECCIÓN 5: FACTURACIÓN (HU-10)       -->
+        <!-- ===================================== -->
+        <section id="tab-invoices" class="hidden space-y-4">
+          <div>
+            <h3 class="font-bold text-lg text-on-surface">Módulo de Facturación y Liquidación</h3>
+            <p class="text-xs text-on-surface-variant">Historial de recibos emitidos con desglose de IVA (19%) y penalizaciones</p>
+          </div>
+
+          <div class="bg-surface rounded-xl border border-outline-variant/40 overflow-hidden shadow-xs">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-surface-container-low text-on-surface-variant font-semibold">
+                  <tr>
+                    <th class="p-3">Factura N°</th>
+                    <th class="p-3">Fecha Emisión</th>
+                    <th class="p-3">Cliente</th>
+                    <th class="p-3">Vehículo</th>
+                    <th class="p-3">Días Contratados</th>
+                    <th class="p-3">Mora Liquidada</th>
+                    <th class="p-3">Total COP</th>
+                    <th class="p-3 text-right">Ver</th>
+                  </tr>
+                </thead>
+                <tbody id="invoicesTableBody" class="divide-y divide-outline-variant/20">
+                  <!-- Dinámico -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODALES FUNCIONALES                                            -->
+  <!-- ============================================================== -->
+
+  <!-- Modal: Registrar Vehículo (HU-01) -->
+  <div id="modalNewVehicle" class="hidden fixed inset-0 bg-on-surface/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-surface rounded-2xl max-w-md w-full p-6 shadow-xl border border-outline-variant/40 space-y-4">
+      <div class="flex items-center justify-between border-b border-outline-variant/30 pb-3">
+        <h4 class="font-bold text-base text-on-surface flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary">directions_car</span>
+          Registrar Nuevo Vehículo
+        </h4>
+        <button onclick="closeModal('modalNewVehicle')" class="text-on-surface-variant hover:text-error">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <form onsubmit="handleSaveVehicle(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-semibold mb-1">Placa (ej. ABC123)</label>
+          <input type="text" id="vPlate" required maxlength="7" class="w-full px-3 py-2 rounded-lg border border-outline-variant uppercase focus:ring-2 focus:ring-primary focus:outline-none"/>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-semibold mb-1">Marca</label>
+            <input type="text" id="vBrand" required class="w-full px-3 py-2 rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:outline-none" placeholder="ej. Chevrolet"/>
+          </div>
+          <div>
+            <label class="block font-semibold mb-1">Modelo / Año</label>
+            <input type="text" id="vModel" required class="w-full px-3 py-2 rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:outline-none" placeholder="ej. Onix 2024"/>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-semibold mb-1">Gama / Tipo</label>
+            <select id="vType" class="w-full px-2.5 py-2 rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:outline-none bg-surface">
+              <option value="Económico">Económico</option>
+              <option value="Gama media">Gama media</option>
+              <option value="Camioneta / SUV">Camioneta / SUV</option>
+              <option value="Gama alta / Lujo">Gama alta / Lujo</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold mb-1">Tarifa diaria (COP)</label>
+            <input type="number" id="vRate" required min="10000" step="5000" class="w-full px-3 py-2 rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:outline-none" placeholder="120000"/>
+          </div>
+        </div>
+        <div>
+          <label class="block font-semibold mb-1">Recargo de Lujo (si aplica, COP)</label>
+          <input type="number" id="vSurcharge" min="0" step="5000" value="0" class="w-full px-3 py-2 rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:outline-none"/>
+        </div>
+        <div class="flex justify-end gap-2 pt-2 border-t border-outline-variant/30">
+          <button type="button" onclick="closeModal('modalNewVehicle')" class="px-4 py-2 rounded-lg border border-outline-variant font-semibold hover:bg-surface-container">Cancelar</button>
+          <button type="submit" class="px-4 py-2 bg-primary text-on-primary rounded-lg font-semibold hover:bg-primary-container">Guardar Vehículo</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Registrar Cliente (HU-04) -->
+  <div id="modalNewCustomer" class="hidden fixed inset-0 bg-on-surface/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-surface rounded-2xl max-w-md w-full p-6 shadow-xl border border-outline-variant/40 space-y-4">
+      <div class="flex items-center justify-between border-b border-outline-variant/30 pb-3">
+        <h4 class="font-bold text-base text-on-surface flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary">person_add</span>
+          Registrar Nuevo Cliente
+        </h4>
+        <button onclick="closeModal('modalNewCustomer')" class="text-on-surface-variant hover:text-error">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <form onsubmit="handleSaveCustomer(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-semibold mb-1">Cédula / Número de Documento</label>
+          <input type="text" id="cDocument" required class="w-full px-3 py-2 rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:outline-none" placeholder="ej. 1075634521"/>
+        </div>
+        <div>
+          <label class="block font-semibold mb-1">Nombre Completo</label>
+          <input type="text" id="cName" required class="w-full px-3 py-2 rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:outline-none" placeholder="ej. Carlos Eduardo Sánchez"/>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-semibold mb-1">Teléfono Móvil</label>
+            <input type="tel" id="cPhone" required class="w-full px-3 py-2 rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:outline-none" placeholder="ej. 3123456789"/>
+          </div>
+          <div>
+            <label class="block font-semibold mb-1">Dirección (Neiva)</label>
+            <input type="text" id="cAddress" required class="w-full px-3 py-2 rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:outline-none" placeholder="ej. Cra 7 # 15-30"/>
+          </div>
+        </div>
+        <div class="flex justify-end gap-2 pt-2 border-t border-outline-variant/30">
+          <button type="button" onclick="closeModal('modalNewCustomer')" class="px-4 py-2 rounded-lg border border-outline-variant font-semibold hover:bg-surface-container">Cancelar</button>
+          <button type="submit" class="px-4 py-2 bg-primary text-on-primary rounded-lg font-semibold hover:bg-primary-container">Guardar Cliente</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Crear Nuevo Alquiler (HU-06) -->
+  <div id="modalNewRental" class="hidden fixed inset-0 bg-on-surface/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-surface rounded-2xl max-w-lg w-full p-6 shadow-xl border border-outline-variant/40 space-y-4">
+      <div class="flex items-center justify-between border-b border-outline-variant/30 pb-3">
+        <h4 class="font-bold text-base text-on-surface flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary">key</span>
+          Registrar Contrato de Alquiler
+        </h4>
+        <button onclick="closeModal('modalNewRental')" class="text-on-surface-variant hover:text-error">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <form onsubmit="handleSaveRental(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-semibold mb-1">Seleccionar Vehículo Disponible</label>
+          <select id="rVehicleSelect" onchange="updateRentalCalc()" required class="w-full px-3 py-2 rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:outline-none bg-surface">
+            <!-- Se llena dinámicamente con autos AVAILABLE -->
+          </select>
+        </div>
+        <div>
+          <label class="block font-semibold mb-1">Seleccionar Cliente</label>
+          <select id="rCustomerSelect" required class="w-full px-3 py-2 rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:outline-none bg-surface">
+            <!-- Se llena con clientes -->
+          </select>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-semibold mb-1">Fecha de Inicio</label>
+            <input type="date" id="rStartDate" onchange="updateRentalCalc()" required class="w-full px-3 py-2 rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:outline-none"/>
+          </div>
+          <div>
+            <label class="block font-semibold mb-1">Fecha de Entrega Pactada</label>
+            <input type="date" id="rDueDate" onchange="updateRentalCalc()" required class="w-full px-3 py-2 rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:outline-none"/>
+          </div>
+        </div>
+
+        <!-- Resumen de liquidación previa -->
+        <div class="p-3 bg-surface-container-low rounded-xl border border-outline-variant/30 space-y-1">
+          <div class="flex justify-between">
+            <span class="text-on-surface-variant">Días calculados:</span>
+            <span id="calcDays" class="font-bold text-on-surface">1 día</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-on-surface-variant">Tarifa por día:</span>
+            <span id="calcRate" class="font-bold text-on-surface">$ 0 COP</span>
+          </div>
+          <div class="flex justify-between border-t border-outline-variant/30 pt-1">
+            <span class="font-bold text-on-surface">Subtotal pactado:</span>
+            <span id="calcSubtotal" class="font-bold text-primary text-sm">$ 0 COP</span>
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-2 border-t border-outline-variant/30">
+          <button type="button" onclick="closeModal('modalNewRental')" class="px-4 py-2 rounded-lg border border-outline-variant font-semibold hover:bg-surface-container">Cancelar</button>
+          <button type="submit" class="px-4 py-2 bg-primary text-on-primary rounded-lg font-semibold hover:bg-primary-container">Emitir Contrato</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Dar de Baja Vehículo (HU-03) -->
+  <div id="modalDeactivate" class="hidden fixed inset-0 bg-on-surface/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-surface rounded-2xl max-w-sm w-full p-6 shadow-xl border border-outline-variant/40 text-center space-y-4">
+      <div class="w-12 h-12 rounded-full bg-error-container text-error mx-auto flex items-center justify-center">
+        <span class="material-symbols-outlined text-2xl">no_crash</span>
+      </div>
+      <div>
+        <h4 class="font-bold text-base text-on-surface">¿Dar de baja este vehículo?</h4>
+        <p class="text-xs text-on-surface-variant mt-1" id="deactivateText">
+          El vehículo pasará a estado INACTIVO y no podrá ser alquilado hasta que sea reactivado.
+        </p>
+      </div>
+      <input type="hidden" id="deactivatePlate"/>
+      <div class="flex justify-center gap-2 pt-2">
+        <button onclick="closeModal('modalDeactivate')" class="px-4 py-2 text-xs rounded-lg border border-outline-variant font-semibold hover:bg-surface-container">Cancelar</button>
+        <button onclick="confirmDeactivate()" class="px-4 py-2 text-xs bg-error text-white rounded-lg font-semibold hover:bg-error/90 shadow-sm">Confirmar Baja del Vehículo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Registrar Devolución y Mora (HU-08 / HU-09) -->
+  <div id="modalReturn" class="hidden fixed inset-0 bg-on-surface/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-surface rounded-2xl max-w-md w-full p-6 shadow-xl border border-outline-variant/40 space-y-4">
+      <div class="flex items-center justify-between border-b border-outline-variant/30 pb-3">
+        <h4 class="font-bold text-base text-on-surface flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary">assignment_turned_in</span>
+          Registrar Devolución de Vehículo
+        </h4>
+        <button onclick="closeModal('modalReturn')" class="text-on-surface-variant hover:text-error">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <div class="text-xs space-y-3">
+        <div class="p-3 bg-surface-container-low rounded-xl space-y-1">
+          <div class="flex justify-between"><span class="text-on-surface-variant">Contrato:</span><span id="retRentalId" class="font-bold">#</span></div>
+          <div class="flex justify-between"><span class="text-on-surface-variant">Vehículo:</span><span id="retVehiclePlate" class="font-bold"></span></div>
+          <div class="flex justify-between"><span class="text-on-surface-variant">Cliente:</span><span id="retCustomerName" class="font-bold"></span></div>
+          <div class="flex justify-between"><span class="text-on-surface-variant">Fecha Pactada:</span><span id="retDueDate" class="font-bold"></span></div>
+        </div>
+
+        <div>
+          <label class="block font-semibold mb-1">Fecha Real de Recepción del Auto</label>
+          <input type="date" id="retActualDate" onchange="recalculateReturnMora()" class="w-full px-3 py-2 rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:outline-none"/>
+        </div>
+
+        <!-- Banner de Mora Dinámica -->
+        <div id="retMoraBanner" class="p-3 rounded-xl bg-error-container text-on-error-container border border-error/30 space-y-1">
+          <div class="flex items-center gap-1.5 font-bold">
+            <span class="material-symbols-outlined text-sm">warning</span>
+            <span>Penalización por mora detectada:</span>
+          </div>
+          <div class="flex justify-between text-xs">
+            <span>Días de retraso:</span>
+            <span id="retMoraDays" class="font-bold">2 días</span>
+          </div>
+          <div class="flex justify-between text-xs">
+            <span>Tarifa penalización ($50.000 COP/d):</span>
+            <span id="retMoraPenalty" class="font-bold">$ 100.000 COP</span>
+          </div>
+        </div>
+
+        <div id="retNoMoraBanner" class="p-3 rounded-xl bg-success-container text-success border border-success/30 flex items-center gap-2">
+          <span class="material-symbols-outlined text-lg">check_circle</span>
+          <span class="font-semibold">Devolución a tiempo. Sin penalización por mora.</span>
+        </div>
+
+        <input type="hidden" id="retTargetRentalId"/>
+
+        <div class="flex justify-end gap-2 pt-2 border-t border-outline-variant/30">
+          <button type="button" onclick="closeModal('modalReturn')" class="px-4 py-2 rounded-lg border border-outline-variant font-semibold hover:bg-surface-container">Cancelar</button>
+          <button type="button" onclick="confirmReturn()" class="px-4 py-2 bg-primary text-on-primary rounded-lg font-semibold hover:bg-primary-container">Completar Recepción</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Factura Electrónica Formal (HU-10) -->
+  <div id="modalInvoice" class="hidden fixed inset-0 bg-on-surface/50 backdrop-blur-xs z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <div id="invoiceModal" class="bg-surface rounded-2xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-outline-variant/40 space-y-4 my-8">
+      
+      <!-- Encabezado Corporativo -->
+      <div class="border-b-2 border-primary/20 pb-4 flex items-start justify-between">
+        <div>
+          <div class="flex items-center gap-2">
+            <div class="w-7 h-7 rounded bg-primary text-on-primary flex items-center justify-center">
+              <span class="material-symbols-outlined text-lg">directions_car</span>
+            </div>
+            <h3 class="font-extrabold text-base text-primary">NEIVA RENT A CAR S.A.S.</h3>
+          </div>
+          <p class="text-[11px] text-on-surface-variant mt-1">Sede Principal Neiva • Huila, Colombia</p>
+          <p class="text-[11px] text-on-surface-variant">Cra 5 # 10-20, Neiva, Huila • PBX: (608) 871-2345</p>
+        </div>
+        <div class="text-right">
+          <span class="block text-xs font-bold text-primary" id="invNumber">FACTURA N° FAC-0001</span>
+          <span class="block text-[11px] text-on-surface-variant" id="invDate">Fecha: 21/11/2026</span>
+          <span class="inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-bold bg-success-container text-success">PAGADA</span>
+        </div>
+      </div>
+
+      <!-- Datos del Cliente y Vehículo -->
+      <div class="grid grid-cols-2 gap-4 text-xs bg-surface-container-low p-3.5 rounded-xl border border-outline-variant/30">
+        <div>
+          <span class="block text-[10px] uppercase font-bold text-outline">Datos del Cliente:</span>
+          <span id="invCustName" class="block font-semibold text-on-surface">Andrés Felipe Cuellar</span>
+          <span id="invCustId" class="block text-on-surface-variant">CC: 1.075.634.521</span>
+          <span id="invCustPhone" class="block text-on-surface-variant">Tel: 312 456 7890</span>
+        </div>
+        <div>
+          <span class="block text-[10px] uppercase font-bold text-outline">Detalles del Servicio:</span>
+          <span id="invVehInfo" class="block font-semibold text-on-surface">Mazda CX-30 (DEF456)</span>
+          <span id="invPeriod" class="block text-on-surface-variant">12/09/2026 al 15/09/2026</span>
+          <span id="invOperator" class="block text-on-surface-variant">Asesor: Carlos Rojas</span>
+        </div>
+      </div>
+
+      <!-- Desglose de Cobros -->
+      <div class="text-xs space-y-2">
+        <table class="w-full text-left">
+          <thead class="border-b border-outline-variant/40 text-[10px] uppercase text-outline font-bold">
+            <tr>
+              <th class="py-1.5">Concepto</th>
+              <th class="py-1.5 text-center">Cantidad</th>
+              <th class="py-1.5 text-right">Valor Unit.</th>
+              <th class="py-1.5 text-right">Total</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-outline-variant/20">
+            <tr>
+              <td class="py-2" id="invDescDays">Alquiler de vehículo estándar</td>
+              <td class="py-2 text-center" id="invQtyDays">3 días</td>
+              <td class="py-2 text-right" id="invUnitRate">$ 150.000</td>
+              <td class="py-2 text-right font-medium" id="invSubtotalDays">$ 450.000</td>
+            </tr>
+            <tr id="invRowSurcharge" class="hidden">
+              <td class="py-2">Recargo especial vehículo gama alta / lujo</td>
+              <td class="py-2 text-center">1 servicio</td>
+              <td class="py-2 text-right" id="invUnitSurcharge">$ 100.000</td>
+              <td class="py-2 text-right font-medium" id="invTotalSurcharge">$ 100.000</td>
+            </tr>
+            <tr id="invRowPenalty" class="hidden text-error">
+              <td class="py-2 font-medium">Penalización por mora (entrega tardía)</td>
+              <td class="py-2 text-center" id="invQtyMora">2 días</td>
+              <td class="py-2 text-right">$ 50.000</td>
+              <td class="py-2 text-right font-bold" id="invTotalPenalty">$ 100.000</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Totales Finales -->
+        <div class="border-t-2 border-outline-variant/40 pt-2 space-y-1">
+          <div class="flex justify-between text-on-surface-variant">
+            <span>Subtotal:</span>
+            <span id="invSubtotalGross" class="font-medium">$ 450.000 COP</span>
+          </div>
+          <div class="flex justify-between text-on-surface-variant">
+            <span>IVA discriminado (19% ref.):</span>
+            <span id="invIva" class="font-medium">$ 85.500 COP</span>
+          </div>
+          <div class="flex justify-between text-base font-extrabold text-primary border-t border-outline-variant/30 pt-1.5">
+            <span>TOTAL LIQUIDADO:</span>
+            <span id="invGrandTotal">$ 450.000 COP</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer y Acciones -->
+      <div class="pt-3 border-t border-outline-variant/30 text-center text-[10px] text-on-surface-variant space-y-1">
+        <p>Factura por computador habilitada mediante resolución DIAN vigente • Neiva, Huila</p>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2 no-print">
+        <button onclick="closeModal('modalInvoice')" class="px-4 py-2 text-xs rounded-lg border border-outline-variant font-semibold hover:bg-surface-container">Cerrar</button>
+        <button onclick="window.print()" class="px-4 py-2 text-xs bg-primary text-on-primary rounded-lg font-semibold hover:bg-primary-container flex items-center gap-1.5 shadow-sm">
+          <span class="material-symbols-outlined text-base">print</span>
+          <span>Imprimir / Guardar PDF</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- LÓGICA DE NEGOCIO Y PERSISTENCIA (JAVASCRIPT / LOCALSTORAGE)   -->
+  <!-- ============================================================== -->
+  <script>
+    // -------------------------------------------------------------
+    // ESTADO GLOBAL Y DATOS SEMILLA (Matching vehicle_rental.sql)
+    // -------------------------------------------------------------
+    const USERS = [
+      { username: 'lmendez', pass: 'admin123', name: 'Laura Méndez', role: 'ADMIN' },
+      { username: 'crojas',  pass: 'emp123',   name: 'Carlos Rojas', role: 'EMPLOYEE' },
+      { username: 'dtorres', pass: 'cash123',  name: 'Diana Torres', role: 'CASHIER' }
+    ];
+
+    const INITIAL_VEHICLES = [
+      { plate: 'ABC123', brand: 'Chevrolet', model: 'Spark GT', type: 'Económico', rate: 90000, surcharge: 0, status: 'AVAILABLE' },
+      { plate: 'DEF456', brand: 'Mazda', model: 'CX-30 Touring', type: 'Gama media', rate: 150000, surcharge: 0, status: 'AVAILABLE' },
+      { plate: 'GHI789', brand: 'BMW', model: 'Serie 4 Gran Coupé', type: 'Gama alta / Lujo', rate: 350000, surcharge: 100000, status: 'AVAILABLE' },
+      { plate: 'JKL012', brand: 'Renault', model: 'Logan Zen', type: 'Económico', rate: 85000, surcharge: 0, status: 'RENTED' },
+      { plate: 'TOY789', brand: 'Toyota', model: 'Hilux 4x4 Diesel', type: 'Camioneta / SUV', rate: 280000, surcharge: 0, status: 'AVAILABLE' }
+    ];
+
+    const INITIAL_CUSTOMERS = [
+      { id: '1075634521', name: 'Andrés Felipe Cuellar', phone: '3124567890', address: 'Cra 5 # 10-20, Neiva' },
+      { id: '52741963',   name: 'Marcela Rincón', phone: '3009876543', address: 'Calle 8 # 3-14, Neiva' }
+    ];
+
+    const INITIAL_RENTALS = [
+      {
+        id: 1,
+        plate: 'ABC123',
+        customerId: '1075634521',
+        startDate: '2026-09-01',
+        dueDate: '2026-09-04',
+        returnDate: '2026-09-04',
+        dailyRate: 90000,
+        surcharge: 0,
+        operator: 'Carlos Rojas',
+        returned: true
+      },
+      {
+        id: 2,
+        plate: 'GHI789',
+        customerId: '52741963',
+        startDate: '2026-09-05',
+        dueDate: '2026-09-08',
+        returnDate: '2026-09-10', // 2 días de retraso
+        dailyRate: 350000,
+        surcharge: 100000,
+        operator: 'Diana Torres',
+        returned: true
+      },
+      {
+        id: 3,
+        plate: 'JKL012',
+        customerId: '1075634521',
+        startDate: getRelativeDate(-5),
+        dueDate: getRelativeDate(-2), // 2 días vencido hoy
+        returnDate: null,
+        dailyRate: 85000,
+        surcharge: 0,
+        operator: 'Carlos Rojas',
+        returned: false
+      }
+    ];
+
+    function getRelativeDate(offsetDays) {
+      const d = new Date();
+      d.setDate(d.getDate() + offsetDays);
+      return d.toISOString().split('T')[0];
+    }
+
+    // Inicializar o cargar desde localStorage
+    let currentUser = null;
+    let vehicles = JSON.parse(localStorage.getItem('nrc_vehicles')) || INITIAL_VEHICLES;
+    let customers = JSON.parse(localStorage.getItem('nrc_customers')) || INITIAL_CUSTOMERS;
+    let rentals = JSON.parse(localStorage.getItem('nrc_rentals')) || INITIAL_RENTALS;
+
+    function saveState() {
+      localStorage.setItem('nrc_vehicles', JSON.stringify(vehicles));
+      localStorage.setItem('nrc_customers', JSON.stringify(customers));
+      localStorage.setItem('nrc_rentals', JSON.stringify(rentals));
+    }
+
+    // Formateador de moneda COP
+    function formatCOP(val) {
+      return '$ ' + Number(val).toLocaleString('es-CO') + ' COP';
+    }
+
+    // -------------------------------------------------------------
+    // AUTENTICACIÓN (LOGIN HU-00 / RBAC)
+    // -------------------------------------------------------------
+    function fillLogin(u, p) {
+      document.getElementById('loginUsername').value = u;
+      document.getElementById('loginPassword').value = p;
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const u = document.getElementById('loginUsername').value.trim();
+      const p = document.getElementById('loginPassword').value.trim();
+      const user = USERS.find(x => x.username.toLowerCase() === u.toLowerCase() && x.pass === p);
+
+      if (user) {
+        currentUser = user;
+        document.getElementById('loginError').classList.add('hidden');
+        document.getElementById('loginView').classList.add('hidden');
+        document.getElementById('appShell').classList.remove('hidden');
+
+        // Actualizar datos del usuario activo
+        document.getElementById('userNameBadge').textContent = user.name;
+        document.getElementById('userRoleBadge').textContent = user.role;
+        document.getElementById('userAvatar').textContent = user.name.split(' ').map(n=>n[0]).join('').substring(0,2);
+
+        // Renderizar vistas
+        refreshAllViews();
+      } else {
+        document.getElementById('loginError').classList.remove('hidden');
+      }
+    }
+
+    function handleLogout() {
+      currentUser = null;
+      document.getElementById('appShell').classList.add('hidden');
+      document.getElementById('loginView').classList.remove('hidden');
+      document.getElementById('loginUsername').value = '';
+      document.getElementById('loginPassword').value = '';
+    }
+
+    // -------------------------------------------------------------
+    // NAVEGACIÓN Y TABS
+    // -------------------------------------------------------------
+    function switchTab(tabId) {
+      const tabs = ['dashboard', 'fleet', 'customers', 'rentals', 'invoices'];
+      tabs.forEach(t => {
+        const sec = document.getElementById('tab-' + t);
+        const btn = document.getElementById('nav-' + t);
+        if (t === tabId) {
+          sec.classList.remove('hidden');
+          btn.classList.add('bg-surface-container', 'text-primary', 'font-semibold');
+          btn.classList.remove('text-on-surface-variant', 'font-medium');
+        } else {
+          sec.classList.add('hidden');
+          btn.classList.remove('bg-surface-container', 'text-primary', 'font-semibold');
+          btn.classList.add('text-on-surface-variant', 'font-medium');
+        }
+      });
+
+      const titles = {
+        dashboard: 'Panel de Control Operativo',
+        fleet: 'Gestión de Flota Vehicular',
+        customers: 'Base de Clientes y Arrendatarios',
+        rentals: 'Contratos y Operaciones de Alquiler',
+        invoices: 'Módulo de Facturación y Liquidación'
+      };
+      document.getElementById('headerTitle').textContent = titles[tabId];
+      toggleSidebar(false);
+    }
+
+    function toggleSidebar(show) {
+      const s = document.getElementById('sidebar');
+      const b = document.getElementById('sidebarBackdrop');
+      if (show) {
+        s.classList.remove('-translate-x-full');
+        b.classList.remove('hidden');
+      } else {
+        s.classList.add('-translate-x-full');
+        b.classList.add('hidden');
+      }
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.add('hidden');
+    }
+
+    // -------------------------------------------------------------
+    // RENDERIZADO Y LÓGICA DE VISTAS
+    // -------------------------------------------------------------
+    function refreshAllViews() {
+      renderDashboard();
+      renderFleetTable();
+      renderCustomersTable();
+      renderRentalsTable();
+      renderInvoicesTable();
+    }
+
+    // DASHBOARD
+    function renderDashboard() {
+      const totalV = vehicles.length;
+      const availV = vehicles.filter(v => v.status === 'AVAILABLE').length;
+      const activeR = rentals.filter(r => !r.returned).length;
+      
+      const today = new Date().toISOString().split('T')[0];
+      const overdueR = rentals.filter(r => !r.returned && r.dueDate < today).length;
+
+      document.getElementById('kpiTotalVehicles').textContent = totalV;
+      document.getElementById('kpiAvailableVehicles').textContent = availV;
+      document.getElementById('kpiActiveRentals').textContent = activeR;
+      document.getElementById('kpiOverdueRentals').textContent = overdueR;
+
+      const banner = document.getElementById('moraAlertBanner');
+      if (overdueR > 0) {
+        banner.classList.remove('hidden');
+        document.getElementById('moraAlertText').textContent = `Hay ${overdueR} vehículo(s) con retraso en la entrega pactada. Aplica cobro de mora ($50.000 COP/día).`;
+      } else {
+        banner.classList.add('hidden');
+      }
+
+      // Tabla de alquileres recientes
+      const tbody = document.getElementById('dashboardRentalsTable');
+      tbody.innerHTML = '';
+      const recent = [...rentals].reverse().slice(0, 4);
+
+      recent.forEach(r => {
+        const v = vehicles.find(x => x.plate === r.plate) || { brand: 'Auto', model: r.plate };
+        const c = customers.find(x => x.id === r.customerId) || { name: 'Cliente' };
+        const isOverdue = !r.returned && r.dueDate < today;
+
+        let statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-success-container text-success">FINALIZADO</span>';
+        if (!r.returned) {
+          if (isOverdue) {
+            statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-error-container text-error animate-pulse">EN MORA</span>';
+          } else {
+            statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-primary-fixed text-primary">EN CURSO</span>';
+          }
+        }
+
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-surface-container-low/40 transition-colors';
+        tr.innerHTML = `
+          <td class="p-3 font-mono font-bold text-primary">#${r.id}</td>
+          <td class="p-3"><span class="font-bold">${v.brand} ${v.model}</span> <span class="text-on-surface-variant font-mono">(${r.plate})</span></td>
+          <td class="p-3">${c.name}</td>
+          <td class="p-3">${r.dueDate}</td>
+          <td class="p-3">${statusBadge}</td>
+          <td class="p-3 text-right">
+            <button onclick="viewInvoice(${r.id})" class="px-2.5 py-1 rounded bg-surface-container hover:bg-surface-container-high text-primary font-semibold text-[11px]">Ver Factura</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // FLOTA DE VEHÍCULOS (HU-01, HU-02, HU-03)
+    function renderFleetTable() {
+      const q = (document.getElementById('fleetSearchInput').value || '').toLowerCase().trim();
+      const statusF = document.getElementById('fleetStatusFilter').value;
+      const tbody = document.getElementById('fleetTableBody');
+      tbody.innerHTML = '';
+
+      const filtered = vehicles.filter(v => {
+        const matchQ = v.plate.toLowerCase().includes(q) || v.brand.toLowerCase().includes(q) || v.model.toLowerCase().includes(q) || v.type.toLowerCase().includes(q);
+        const matchS = (statusF === 'ALL') || (v.status === statusF);
+        return matchQ && matchS;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-on-surface-variant">No se encontraron vehículos registrados con esos criterios.</td></tr>';
+        return;
+      }
+
+      filtered.forEach(v => {
+        let pill = '';
+        if (v.status === 'AVAILABLE') {
+          pill = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-success-container text-success">DISPONIBLE</span>';
+        } else if (v.status === 'RENTED') {
+          pill = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-surface-container text-primary">ALQUILADO</span>';
+        } else {
+          pill = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-error-container text-error">INACTIVO (BAJA)</span>';
+        }
+
+        let actionBtns = '';
+        if (v.status === 'AVAILABLE') {
+          actionBtns = `
+            <button onclick="promptDeactivate('${v.plate}')" class="px-2 py-1 rounded text-[11px] font-semibold text-error hover:bg-error-container transition-colors" title="Dar de baja este auto">Dar de baja</button>
+          `;
+        } else if (v.status === 'INACTIVE') {
+          actionBtns = `
+            <button onclick="reactivateVehicle('${v.plate}')" class="px-2 py-1 rounded text-[11px] font-semibold text-success hover:bg-success-container transition-colors">Reactivar</button>
+          `;
+        } else {
+          actionBtns = `<span class="text-[11px] text-on-surface-variant italic">En contrato</span>`;
+        }
+
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-surface-container-low/40 transition-colors';
+        tr.innerHTML = `
+          <td class="p-3 font-mono font-bold text-on-surface">${v.plate}</td>
+          <td class="p-3"><span class="font-bold">${v.brand}</span> ${v.model}</td>
+          <td class="p-3">${v.type}</td>
+          <td class="p-3 font-semibold text-on-surface">${formatCOP(v.rate)}</td>
+          <td class="p-3">${pill}</td>
+          <td class="p-3 text-right">${actionBtns}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function openNewVehicleModal() {
+      document.getElementById('modalNewVehicle').classList.remove('hidden');
+    }
+
+    function handleSaveVehicle(e) {
+      e.preventDefault();
+      const plate = document.getElementById('vPlate').value.trim().toUpperCase();
+      if (vehicles.some(v => v.plate === plate)) {
+        alert('Ya existe un vehículo registrado con la placa ' + plate);
+        return;
+      }
+      const newV = {
+        plate,
+        brand: document.getElementById('vBrand').value.trim(),
+        model: document.getElementById('vModel').value.trim(),
+        type: document.getElementById('vType').value,
+        rate: Number(document.getElementById('vRate').value),
+        surcharge: Number(document.getElementById('vSurcharge').value) || 0,
+        status: 'AVAILABLE'
+      };
+      vehicles.push(newV);
+      saveState();
+      closeModal('modalNewVehicle');
+      renderFleetTable();
+      renderDashboard();
+      alert('Vehículo ' + plate + ' registrado exitosamente.');
+    }
+
+    function promptDeactivate(plate) {
+      const v = vehicles.find(x => x.plate === plate);
+      if (!v) return;
+      document.getElementById('deactivatePlate').value = plate;
+      document.getElementById('deactivateText').textContent = `El vehículo ${v.brand} ${v.model} (${plate}) pasará a estado INACTIVO y no podrá ser asignado a nuevos contratos.`;
+      document.getElementById('modalDeactivate').classList.remove('hidden');
+    }
+
+    function confirmDeactivate() {
+      const plate = document.getElementById('deactivatePlate').value;
+      const v = vehicles.find(x => x.plate === plate);
+      if (v) {
+        v.status = 'INACTIVE';
+        saveState();
+        closeModal('modalDeactivate');
+        renderFleetTable();
+        renderDashboard();
+      }
+    }
+
+    function reactivateVehicle(plate) {
+      const v = vehicles.find(x => x.plate === plate);
+      if (v) {
+        v.status = 'AVAILABLE';
+        saveState();
+        renderFleetTable();
+        renderDashboard();
+      }
+    }
+
+    // CLIENTES
+    function renderCustomersTable() {
+      const q = (document.getElementById('customerSearchInput').value || '').toLowerCase().trim();
+      const tbody = document.getElementById('customersTableBody');
+      tbody.innerHTML = '';
+
+      const filtered = customers.filter(c => c.name.toLowerCase().includes(q) || c.id.includes(q));
+      filtered.forEach(c => {
+        const rentalCount = rentals.filter(r => r.customerId === c.id).length;
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-surface-container-low/40 transition-colors';
+        tr.innerHTML = `
+          <td class="p-3 font-mono font-bold">${c.id}</td>
+          <td class="p-3 font-semibold">${c.name}</td>
+          <td class="p-3">${c.phone}</td>
+          <td class="p-3 text-on-surface-variant">${c.address}</td>
+          <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold bg-surface-container text-primary">${rentalCount} alquiler(es)</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function openNewCustomerModal() {
+      document.getElementById('modalNewCustomer').classList.remove('hidden');
+    }
+
+    function handleSaveCustomer(e) {
+      e.preventDefault();
+      const id = document.getElementById('cDocument').value.trim();
+      if (customers.some(c => c.id === id)) {
+        alert('Ya existe un cliente con ese documento.');
+        return;
+      }
+      customers.push({
+        id,
+        name: document.getElementById('cName').value.trim(),
+        phone: document.getElementById('cPhone').value.trim(),
+        address: document.getElementById('cAddress').value.trim()
+      });
+      saveState();
+      closeModal('modalNewCustomer');
+      renderCustomersTable();
+      alert('Cliente registrado con éxito.');
+    }
+
+    // ALQUILERES (CONTRATOS)
+    function renderRentalsTable() {
+      const tbody = document.getElementById('rentalsTableBody');
+      tbody.innerHTML = '';
+      const today = new Date().toISOString().split('T')[0];
+
+      rentals.forEach(r => {
+        const v = vehicles.find(x => x.plate === r.plate) || { brand: 'Auto', model: r.plate };
+        const c = customers.find(x => x.id === r.customerId) || { name: 'Cliente' };
+
+        const isOverdue = !r.returned && r.dueDate < today;
+        let statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-success-container text-success">FINALIZADO</span>';
+        let actionBtn = `<button onclick="viewInvoice(${r.id})" class="px-2.5 py-1 rounded bg-surface-container hover:bg-surface-container-high text-primary font-semibold text-[11px]">Ver Factura</button>`;
+
+        if (!r.returned) {
+          if (isOverdue) {
+            statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-error-container text-error animate-pulse">EN MORA (+retraso)</span>';
+          } else {
+            statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-primary-fixed text-primary">ACTIVO</span>';
+          }
+
+          actionBtn = `
+            <div class="flex justify-end gap-1.5">
+              <button onclick="promptReturn(${r.id})" class="px-2 py-1 rounded bg-primary text-white font-semibold text-[11px] hover:bg-primary-container">Recibir / Retorno</button>
+              <button onclick="extendRentalDays(${r.id})" class="px-2 py-1 rounded border border-outline-variant hover:bg-surface-container font-semibold text-[11px]" title="Extender plazo de entrega">+ Días</button>
+            </div>
+          `;
+        }
+
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-surface-container-low/40 transition-colors';
+        tr.innerHTML = `
+          <td class="p-3 font-mono font-bold text-primary">#${r.id}</td>
+          <td class="p-3"><span class="font-bold">${v.brand} ${v.model}</span> <span class="font-mono text-on-surface-variant">(${r.plate})</span></td>
+          <td class="p-3">${c.name}</td>
+          <td class="p-3">${r.startDate}</td>
+          <td class="p-3 font-semibold">${r.dueDate}</td>
+          <td class="p-3">${statusBadge}</td>
+          <td class="p-3 text-right">${actionBtn}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function openNewRentalModal() {
+      const vSelect = document.getElementById('rVehicleSelect');
+      vSelect.innerHTML = '';
+      const avail = vehicles.filter(v => v.status === 'AVAILABLE');
+
+      if (avail.length === 0) {
+        alert('No hay vehículos disponibles en la flota en este momento.');
+        return;
+      }
+
+      avail.forEach(v => {
+        const opt = document.createElement('option');
+        opt.value = v.plate;
+        opt.textContent = `${v.plate} - ${v.brand} ${v.model} (${v.type}) • ${formatCOP(v.rate)}/d`;
+        vSelect.appendChild(opt);
+      });
+
+      const cSelect = document.getElementById('rCustomerSelect');
+      cSelect.innerHTML = '';
+      customers.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = `${c.name} (CC: ${c.id})`;
+        cSelect.appendChild(opt);
+      });
+
+      const today = new Date().toISOString().split('T')[0];
+      const tomorrow = getRelativeDate(3);
+      document.getElementById('rStartDate').value = today;
+      document.getElementById('rDueDate').value = tomorrow;
+
+      updateRentalCalc();
+      document.getElementById('modalNewRental').classList.remove('hidden');
+    }
+
+    function updateRentalCalc() {
+      const plate = document.getElementById('rVehicleSelect').value;
+      const v = vehicles.find(x => x.plate === plate);
+      if (!v) return;
+
+      const s = new Date(document.getElementById('rStartDate').value);
+      const e = new Date(document.getElementById('rDueDate').value);
+      let diff = Math.ceil((e - s) / (1000 * 60 * 60 * 24));
+      if (diff <= 0) diff = 1;
+
+      document.getElementById('calcDays').textContent = diff + ' día(s)';
+      document.getElementById('calcRate').textContent = formatCOP(v.rate);
+      document.getElementById('calcSubtotal').textContent = formatCOP(diff * v.rate);
+    }
+
+    function handleSaveRental(e) {
+      e.preventDefault();
+      const plate = document.getElementById('rVehicleSelect').value;
+      const customerId = document.getElementById('rCustomerSelect').value;
+      const startDate = document.getElementById('rStartDate').value;
+      const dueDate = document.getElementById('rDueDate').value;
+
+      const v = vehicles.find(x => x.plate === plate);
+      if (!v) return;
+
+      const newId = rentals.length > 0 ? Math.max(...rentals.map(r => r.id)) + 1 : 1;
+      const newRental = {
+        id: newId,
+        plate,
+        customerId,
+        startDate,
+        dueDate,
+        returnDate: null,
+        dailyRate: v.rate,
+        surcharge: v.surcharge || 0,
+        operator: currentUser ? currentUser.name : 'Laura Méndez',
+        returned: false
+      };
+
+      v.status = 'RENTED';
+      rentals.push(newRental);
+      saveState();
+
+      closeModal('modalNewRental');
+      refreshAllViews();
+      alert(`Contrato #${newId} emitido con éxito. El auto ${plate} ahora está ALQUILADO.`);
+    }
+
+    function extendRentalDays(rentalId) {
+      const r = rentals.find(x => x.id === rentalId);
+      if (!r) return;
+      const days = prompt('¿Cuántos días adicionales desea extender el contrato #' + rentalId + '?:', '2');
+      if (days && !isNaN(days) && Number(days) > 0) {
+        const curr = new Date(r.dueDate);
+        curr.setDate(curr.getDate() + Number(days));
+        r.dueDate = curr.toISOString().split('T')[0];
+        saveState();
+        refreshAllViews();
+        alert('Contrato extendido. Nueva fecha de entrega pactada: ' + r.dueDate);
+      }
+    }
+
+    // DEVOLUCIONES Y MORA (HU-08, HU-09)
+    function promptReturn(rentalId) {
+      const r = rentals.find(x => x.id === rentalId);
+      if (!r) return;
+      const v = vehicles.find(x => x.plate === r.plate) || { brand: 'Auto', model: r.plate };
+      const c = customers.find(x => x.id === r.customerId) || { name: 'Cliente' };
+
+      document.getElementById('retTargetRentalId').value = rentalId;
+      document.getElementById('retRentalId').textContent = '#' + r.id;
+      document.getElementById('retVehiclePlate').textContent = `${r.plate} (${v.brand} ${v.model})`;
+      document.getElementById('retCustomerName').textContent = c.name;
+      document.getElementById('retDueDate').textContent = r.dueDate;
+
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('retActualDate').value = today;
+
+      recalculateReturnMora();
+      document.getElementById('modalReturn').classList.remove('hidden');
+    }
+
+    function recalculateReturnMora() {
+      const rentalId = Number(document.getElementById('retTargetRentalId').value);
+      const r = rentals.find(x => x.id === rentalId);
+      if (!r) return;
+
+      const retDate = document.getElementById('retActualDate').value;
+      const due = new Date(r.dueDate);
+      const actual = new Date(retDate);
+
+      const diffDays = Math.ceil((actual - due) / (1000 * 60 * 60 * 24));
+      const moraBanner = document.getElementById('retMoraBanner');
+      const noMoraBanner = document.getElementById('retNoMoraBanner');
+
+      if (diffDays > 0) {
+        moraBanner.classList.remove('hidden');
+        noMoraBanner.classList.add('hidden');
+        document.getElementById('retMoraDays').textContent = diffDays + ' día(s)';
+        document.getElementById('retMoraPenalty').textContent = formatCOP(diffDays * 50000);
+      } else {
+        moraBanner.classList.add('hidden');
+        noMoraBanner.classList.remove('hidden');
+      }
+    }
+
+    function confirmReturn() {
+      const rentalId = Number(document.getElementById('retTargetRentalId').value);
+      const r = rentals.find(x => x.id === rentalId);
+      if (!r) return;
+
+      const returnDate = document.getElementById('retActualDate').value;
+      r.returnDate = returnDate;
+      r.returned = true;
+
+      const v = vehicles.find(x => x.plate === r.plate);
+      if (v) v.status = 'AVAILABLE';
+
+      saveState();
+      closeModal('modalReturn');
+      refreshAllViews();
+
+      alert(`Devolución registrada con éxito. El auto ${r.plate} vuelve a estar DISPONIBLE.`);
+      viewInvoice(r.id);
+    }
+
+    // FACTURACIÓN (HU-10)
+    function renderInvoicesTable() {
+      const tbody = document.getElementById('invoicesTableBody');
+      tbody.innerHTML = '';
+
+      rentals.forEach(r => {
+        const v = vehicles.find(x => x.plate === r.plate) || { brand: 'Auto', model: r.plate };
+        const c = customers.find(x => x.id === r.customerId) || { name: 'Cliente' };
+
+        const sDate = new Date(r.startDate);
+        const dDate = new Date(r.dueDate);
+        let days = Math.ceil((dDate - sDate) / (1000 * 60 * 60 * 24));
+        if (days <= 0) days = 1;
+
+        let moraDays = 0;
+        const compDate = r.returnDate ? new Date(r.returnDate) : new Date();
+        if (compDate > dDate) {
+          moraDays = Math.ceil((compDate - dDate) / (1000 * 60 * 60 * 24));
+        }
+
+        const subtotal = days * r.dailyRate;
+        const penalty = moraDays * 50000;
+        const total = subtotal + (r.surcharge || 0) + penalty;
+
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-surface-container-low/40 transition-colors';
+        tr.innerHTML = `
+          <td class="p-3 font-mono font-bold text-primary">FAC-${String(r.id).padStart(4, '0')}</td>
+          <td class="p-3">${r.returnDate || r.startDate}</td>
+          <td class="p-3 font-semibold">${c.name}</td>
+          <td class="p-3">${v.brand} ${v.model} (${r.plate})</td>
+          <td class="p-3">${days} días</td>
+          <td class="p-3 ${moraDays > 0 ? 'text-error font-bold' : 'text-on-surface-variant'}">${moraDays > 0 ? '+' + moraDays + 'd (' + formatCOP(penalty) + ')' : 'Sin mora'}</td>
+          <td class="p-3 font-bold text-on-surface">${formatCOP(total)}</td>
+          <td class="p-3 text-right">
+            <button onclick="viewInvoice(${r.id})" class="px-2 py-1 rounded bg-surface-container hover:bg-surface-container-high text-primary font-semibold text-[11px]">Ver</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function viewInvoice(rentalId) {
+      const r = rentals.find(x => x.id === rentalId);
+      if (!r) return;
+      const v = vehicles.find(x => x.plate === r.plate) || { brand: 'Vehículo', model: r.plate, type: 'Económico' };
+      const c = customers.find(x => x.id === r.customerId) || { name: 'Cliente', id: '000', phone: '-' };
+
+      document.getElementById('invNumber').textContent = 'FACTURA N° FAC-' + String(r.id).padStart(4, '0');
+      document.getElementById('invDate').textContent = 'Fecha: ' + (r.returnDate || new Date().toISOString().split('T')[0]);
+
+      document.getElementById('invCustName').textContent = c.name;
+      document.getElementById('invCustId').textContent = 'CC: ' + c.id;
+      document.getElementById('invCustPhone').textContent = 'Tel: ' + c.phone;
+
+      document.getElementById('invVehInfo').textContent = `${v.brand} ${v.model} (${r.plate}) - ${v.type}`;
+      document.getElementById('invPeriod').textContent = `${r.startDate} al ${r.dueDate}`;
+      document.getElementById('invOperator').textContent = 'Operador: ' + (r.operator || 'Carlos Rojas');
+
+      const sDate = new Date(r.startDate);
+      const dDate = new Date(r.dueDate);
+      let days = Math.ceil((dDate - sDate) / (1000 * 60 * 60 * 24));
+      if (days <= 0) days = 1;
+
+      const subtotalDays = days * r.dailyRate;
+      document.getElementById('invDescDays').textContent = `Alquiler de vehículo (${v.brand} ${v.model})`;
+      document.getElementById('invQtyDays').textContent = days + ' día(s)';
+      document.getElementById('invUnitRate').textContent = formatCOP(r.dailyRate);
+      document.getElementById('invSubtotalDays').textContent = formatCOP(subtotalDays);
+
+      // Recargo
+      const surcharge = r.surcharge || 0;
+      const rowSur = document.getElementById('invRowSurcharge');
+      if (surcharge > 0) {
+        rowSur.classList.remove('hidden');
+        document.getElementById('invUnitSurcharge').textContent = formatCOP(surcharge);
+        document.getElementById('invTotalSurcharge').textContent = formatCOP(surcharge);
+      } else {
+        rowSur.classList.add('hidden');
+      }
+
+      // Mora
+      let moraDays = 0;
+      const compDate = r.returnDate ? new Date(r.returnDate) : new Date();
+      if (compDate > dDate) {
+        moraDays = Math.ceil((compDate - dDate) / (1000 * 60 * 60 * 24));
+      }
+      const penalty = moraDays * 50000;
+      const rowPen = document.getElementById('invRowPenalty');
+      if (moraDays > 0) {
+        rowPen.classList.remove('hidden');
+        document.getElementById('invQtyMora').textContent = moraDays + ' día(s)';
+        document.getElementById('invTotalPenalty').textContent = formatCOP(penalty);
+      } else {
+        rowPen.classList.add('hidden');
+      }
+
+      const grandTotal = subtotalDays + surcharge + penalty;
+      const iva = grandTotal * 0.19;
+
+      document.getElementById('invSubtotalGross').textContent = formatCOP(grandTotal);
+      document.getElementById('invIva').textContent = formatCOP(iva);
+      document.getElementById('invGrandTotal').textContent = formatCOP(grandTotal);
+
+      document.getElementById('modalInvoice').classList.remove('hidden');
+    }
+
+    // Auto-arranque si hay sesión o directo en login
+    window.addEventListener('DOMContentLoaded', () => {
+      // Dejar en pantalla de login para que el evaluador inicie
+    });
+  </script>
+</body>
+</html>

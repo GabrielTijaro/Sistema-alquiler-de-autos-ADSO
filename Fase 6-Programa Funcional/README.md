@@ -1,5 +1,5 @@
 # Fase 6: Programa Funcional — Neiva Rent a Car
-## Sistema de Gestión de Alquiler de Vehículos (MVP)
+## Aplicación Web Operativa Integral (Fase 6)
 
 **Programa de Formación:** Tecnólogo en Análisis y Desarrollo de Software (ADSO)  
 **Servicio Nacional de Aprendizaje (SENA):** Regional Huila — Centro de la Industria, la Empresa y los Servicios (CIES)  
@@ -7,114 +7,88 @@
 **Autores:** Gabriel Tijaro Jiménez, Juan Camilo Gaitán  
 **Instructor Evaluador:** Carlos Julio Cadena  
 **Rama de Evaluación:** `develop`  
-**Tecnologías:** Java 17 (OpenJDK), Apache Maven, POO (Herencia, Polimorfismo, Encapsulamiento), API de fechas `java.time.LocalDate`.
+**Tecnologías:** HTML5 Semántico, Tailwind CSS (RWD), Vanilla JavaScript Moderno (ES6+), Persistencia de Datos `localStorage`, Java 17 / Maven.
 
 ---
 
-## 1. Presentación y Alcance de la Fase 6
+## 1. Presentación de la Aplicación Funcional
 
-La **Fase 6 (Programa Funcional)** materializa el paso definitivo del diseño a la **implementación ejecutable**. Representa el software en funcionamiento que integra de forma coherente las fases previas del ciclo formativo:
-* **Fase 1 y 2 (Requerimientos y Metodología):** Cobertura estricta de las 13 Historias de Usuario priorizadas con MoSCoW y los 8 Requisitos Funcionales del documento `REQUERIMIENTOS DEL SISTEMA.pdf` (SRS bajo estándar IEEE 830) y `docs/fase1_fase2_especificacion_autenticacion.md`.
-* **Fase 3 (Diseño UML):** Implementación de clases POO correspondientes a `Vehicle`, `LuxuryVehicle`, `Customer`, `Rental`, `Company` y `User`.
-* **Fase 4 (Base de Datos Relacional 3FN):** Correspondencia de entidades, tipos de datos y reglas de negocio con `Fase 4/vehicle_rental.sql` (baja lógica `INACTIVE`, recargo de lujo y penalización de mora a $50.000 COP/día).
-* **Fase 5 (Mockup UX/UI):** Reflejo funcional en consola de los flujos interactivos validados en el prototipo responsivo web.
+La **Fase 6 (Programa Funcional)** representa el sistema en pleno funcionamiento con una **interfaz gráfica interactiva y profesional** basada en el sistema de diseño corporativo de *Neiva Rent a Car*.
+
+A diferencia de los prototipos estáticos de la Fase 5, esta versión es **100% interactiva y funcional**:
+* **Gestión de Sesión con Roles (RBAC - `HU-00 / RF-00`):** Inicio de sesión con validación para `ADMIN` (Laura Méndez), `EMPLOYEE` (Carlos Rojas) y `CASHIER` (Diana Torres).
+* **Panel de Control Dinámico:** Tarjetas KPI en tiempo real (Total Flota, Disponibles, Alquilados, En Mora) y alertas preventivas.
+* **Flota con Bajas Lógicas (`HU-01`, `HU-02`, `HU-03`):** Registro de nuevos autos con cálculo de tarifas, búsqueda predictiva instantánea (`LIKE`), y acción funcional de **"Dar de baja"** que pasa el vehículo al estado `INACTIVO` e impide alquilarlo.
+* **Gestión de Clientes (`HU-04`, `HU-05`):** Formulario para registrar arrendatarios con cédula, teléfono y dirección.
+* **Contratos de Alquiler y Cálculo en COP (`HU-06`, `HU-07`):** Selección de vehículos disponibles, cliente, fechas con calendario dinámico y cálculo automático del subtotal. Incluye extensión de plazos pactados.
+* **Devoluciones con Detección Automática de Mora (`HU-08`, `HU-09`):** Al recibir el auto, el sistema detecta los días de retraso y liquida la multa por mora ($50.000 COP/día, correspondiente al script SQL de Fase 4).
+* **Facturación Formal (`HU-10 / RF-07`):** Recibo corporativo listo para imprimir o guardar en PDF con desglose de días contratados, recargo de lujo, penalización de mora, IVA discriminado (19%) y total a pagar.
+* **Persistencia de Datos:** Todos los registros nuevos o cambios de estado se guardan en el navegador (`localStorage`) y vienen precargados con datos semilla de Neiva para probar de inmediato.
 
 ---
 
-## 2. Instrucciones Rápidas de Ejecución
+## 2. Cómo Probar el Programa (Sin Terminal)
 
-Para facilitar la evaluación al instructor, el sistema puede ejecutarse mediante cualquiera de los siguientes dos métodos:
+Tienes dos formas sencillas de probar la aplicación en tu navegador web (Google Chrome, Firefox o Edge):
 
-### Método A: Ejecución en 1 Clic (Recomendado sin necesidad de IDE)
-Desde la terminal en la raíz del repositorio, ejecuta:
+### Opción 1: Doble Clic Directo (Recomendada)
+Simplemente entra a la carpeta **`Fase 6-Programa Funcional/`** y haz **doble clic sobre el archivo `index.html`**. Se abrirá de inmediato en tu navegador predeterminado.
+
+### Opción 2: Mediante el Lanzador
+Desde la terminal o haciendo clic derecho en el archivo:
 ```bash
-./"Fase 6-Programa Funcional/ejecutar.sh"
+./"Fase 6-Programa Funcional/abrir_en_navegador.sh"
 ```
-O directamente con la máquina virtual de Java:
-```bash
-java -jar "Fase 6-Programa Funcional/NeivaRentACar.jar"
-```
-
-### Método B: Ejecución desde NetBeans / Maven (Código Fuente)
-El proyecto cuenta con su archivo `pom.xml` en la raíz. Para compilar y correr desde consola:
-```bash
-# Compilar clases
-javac -d target/classes src/main/java/com/mycompany/alquiler_autosv2/*.java
-
-# Ejecutar clase principal
-java -cp target/classes com.mycompany.alquiler_autosv2.Alquiler_autosv2
-```
-O simplemente abrir el repositorio en **Apache NetBeans** y pulsar la tecla **`F6`** (Run Project).
 
 ---
 
-## 3. Matriz de Autenticación y Usuarios de Prueba (HU-00 / RF-00)
+## 3. Credenciales de Acceso para la Evaluación (HU-00)
 
-El sistema incorpora control de acceso basado en roles (**RBAC - Role-Based Access Control**). Al arrancar, solicita credenciales predeterminadas para cada actor del negocio:
+En la pantalla de inicio puedes hacer clic en los botones de acceso rápido o ingresar manualmente:
 
-| Usuario (`username`) | Contraseña | Nombre Completo | Rol del Sistema | Alcance y Permisos en el Menú |
-| :--- | :---: | :--- | :---: | :--- |
-| **`lmendez`** | `admin123` | Laura Méndez | **`ADMIN`** | **Acceso total:** Gestión de flota (crear, actualizar, dar de baja `HU-03`), clientes, contratos, liquidaciones y reportes consolidados. |
-| **`crojas`** | `emp123` | Carlos Rojas | **`EMPLOYEE`** | **Operaciones de Asesor:** Consultar flota disponible, registrar clientes, generar contratos de alquiler y extender plazos (`HU-07`). |
-| **`dtorres`** | `cash123` | Diana Torres | **`CASHIER`** | **Operaciones de Caja:** Registrar devolución con verificación automática de mora y emisión de la factura final desglosada en COP (`HU-10`). |
+| Usuario | Contraseña | Nombre del Operador | Rol Asignado |
+| :--- | :---: | :--- | :---: |
+| **`lmendez`** | `admin123` | Laura Méndez | **Administradora** |
+| **`crojas`** | `emp123` | Carlos Rojas | **Asesor / Empleado** |
+| **`dtorres`** | `cash123` | Diana Torres | **Cajera** |
 
 ---
 
-## 4. Matriz de Trazabilidad 1 a 1 (SRS vs. Código Java)
+## 4. Guía Rápida de Pruebas para la Sustentación
 
-| Módulo / Menú | Historia de Usuario | Requerimiento Funcional | Clase Java Responsable | Regla de Negocio / Implementación |
+1. **Paso 1: Ingreso y Revisión de Flota**
+   * Haz clic en el botón rápido **Admin (Laura M.)** y pulsa **"Ingresar al Sistema"**.
+   * En el Panel de Control verás la alerta roja que indica que hay un vehículo con entrega retrasada.
+   * Ve al menú **"Gestión de Flota"**: Verás la tabla con los vehículos iniciales (Spark `ABC123`, Mazda CX-30 `DEF456`, BMW `GHI789`, etc.).
+   * En el buscador escribe `Mazda` o `Spark` y observa el filtrado predictivo en tiempo real.
+   * En el vehículo `ABC123`, haz clic en **"Dar de baja"** y confirma en el modal: verás que su estado cambia inmediatamente a **`INACTIVO (BAJA)`**.
+2. **Paso 2: Registrar un Nuevo Alquiler (`HU-06`)**
+   * Ve a **"Alquileres y Contratos"** y haz clic en **"+ Crear Nuevo Contrato"**.
+   * Selecciona el vehículo disponible (ej. Mazda CX-30), el cliente y define las fechas: verás cómo se calcula automáticamente el subtotal en COP.
+   * Pulsa **"Emitir Contrato"**: El vehículo pasa a estado `ALQUILADO` y se suma a la tabla.
+3. **Paso 3: Registrar Devolución con Mora y Factura (`HU-08`, `HU-09`, `HU-10`)**
+   * En la tabla de alquileres, ubica el contrato **#3** (Placa `JKL012` - Renault Logan), el cual tiene entrega vencida.
+   * Haz clic en el botón azul **"Recibir / Retorno"**:
+     * El sistema muestra el modal detectando automáticamente:  
+       `Penalización por mora detectada: 2 días ($ 100.000 COP)`.
+     * Haz clic en **"Completar Recepción"**.
+   * Inmediatamente se abre la **Factura Electrónica Corporativa**:
+     * Desglose de los 3 días de alquiler: $255.000 COP.
+     * Penalización por mora (2 días): $100.000 COP.
+     * Total Liquidado: **$355.000 COP**.
+     * Botón para **Imprimir o Guardar en PDF**.
+
+---
+
+## 5. Matriz de Trazabilidad Técnica (Fase 1 a Fase 6)
+
+| Módulo Visual | Historia de Usuario | Requisito Funcional | Tabla BD (Fase 4) | Funcionalidad Implementada |
 | :--- | :---: | :---: | :--- | :--- |
-| **Inicio de Sesión** | `HU-00` | `RF-00` | `User.java`, `Alquiler_autosv2.java` | Autenticación RBAC para roles `ADMIN`, `EMPLOYEE`, `CASHIER`. |
-| **Registro de Flota** | `HU-01` | `RF-01` | `Vehicle.java`, `Company.java` | Registro de autos con placa única, marca, modelo, gama y tarifa/día. |
-| **Consulta de Flota** | `HU-02` | `RF-02` | `Company.java` (`searchVehicles`) | Búsqueda predictiva con filtros por placa, marca, modelo o tipo (`LIKE`). |
-| **Baja Lógica** | `HU-03` | `RF-01` | `Vehicle.java` (`deactivate`) | Cambio de estado a `INACTIVE` sin borrar registros históricos; impide alquiler de autos inactivos. |
-| **Gestión de Clientes**| `HU-04`, `HU-05`| `RF-03` | `Customer.java`, `Company.java` | Registro y actualización con validación de cédula/documento único y dirección. |
-| **Contrato de Alquiler**| `HU-06` | `RF-04` | `Rental.java`, `Company.java` | Contrato con fechas reales (`LocalDate`), cálculo de días e indisponibilidad del auto (`RENTED`). |
-| **Extensión de Alquiler**| `HU-07` | `RF-08` | `Rental.java` (`extendDueDate`) | Adición de días al plazo pactado recalculando la fecha de entrega. |
-| **Devolución de Auto** | `HU-08` | `RF-05` | `Rental.java` (`registerReturn`) | Retorno del auto liberándolo a `AVAILABLE` y registro de fecha real de entrega. |
-| **Cálculo de Mora** | `HU-09` | `RF-06` | `Rental.java` (`calculatePenalty`)| Detección de días de retraso (`ChronoUnit.DAYS`) y cobro de penalización ($50.000 COP/día). |
-| **Facturación Final** | `HU-10` | `RF-07` | `Alquiler_autosv2.java` (`printInvoice`)| Recibo formal en COP: subtotal, recargo de lujo, mora, IVA discriminado y total liquidado. |
-| **Vehículos de Lujo** | `HU-01` | `RF-01` | `LuxuryVehicle.java` | Herencia POO que sobreescribe `calculateDailyRate()` sumando tarifa base + recargo. |
-| **Reportes Generales** | `HU-13` | — | `Company.java`, `Alquiler_autosv2.java` | Auditoría consolidada de inventario, clientes y estados de contratos. |
-
----
-
-## 5. Flujo de Demostración Guiado para Evaluación
-
-Para verificar en vivo el funcionamiento del programa ante el instructor:
-
-1. **Paso 1: Demostración de Roles y Flota (Usuario `lmendez` / `admin123`)**
-   * Inicia sesión como Administradora.
-   * Selecciona **Opción 6 (Reportes Consolidados)**: Observa los 5 vehículos pre-cargados (Mazda CX-30, Renault Logan, BMW Serie 4, etc.) y los clientes de prueba con cédulas colombianas.
-   * Selecciona **Opción 1 > Opción 3 (Dar de baja vehiculo)**: Digita la placa `ABC123`. Confirma con `S`. Verifica que su estado pasa inmediatamente a `INACTIVE`.
-   * Cierra sesión (Opción 7).
-
-2. **Paso 2: Demostración de Contrato de Alquiler (Usuario `crojas` / `emp123`)**
-   * Inicia sesión como Asesor. Observa que el menú se adapta automáticamente mostrando solo sus funciones operativas.
-   * Selecciona **Opción 3 (Registrar Nuevo Contrato)**:
-     * Placa: `DEF456` (Mazda CX-30 disponible).
-     * Cédula: `1075634521` (Andrés Felipe Cuellar).
-     * Días: `4`.
-   * El sistema genera el **Contrato #4** calculando automáticamente el subtotal en COP y marcando el vehículo como `RENTED`.
-   * Cierra sesión (Opción 6).
-
-3. **Paso 3: Demostración de Devolución con Mora y Facturación (Usuario `dtorres` / `cash123`)**
-   * Inicia sesión como Cajera.
-   * Selecciona **Opción 1 (Registrar Devolucion)** y digita la placa **`JKL012`** (alquiler de prueba en mora):
-     * El sistema detecta inmediatamente:  
-       `>>> ATENCION: EL VEHICULO PRESENTA 2 DIAS DE MORA <<<`  
-       `Total multa por mora: $ 100.000 COP (2 días x $ 50.000 COP)`
-     * Confirma la recepción con `S`. El vehículo regresa al estado `AVAILABLE`.
-   * Selecciona **Opción 2 (Generar Factura Final)** para la placa **`JKL012`**:
-     * El sistema imprime la factura formal desglosando los 3 días contratados ($255.000 COP), la penalización por mora ($100.000 COP) y el total liquidado de **$355.000 COP**.
-
----
-
-## 6. Principios de Ingeniería de Software Aplicados
-
-* **Paradigma Orientado a Objetos (POO):**
-  * **Encapsulamiento:** Atributos privados con métodos de acceso controlados en todas las entidades.
-  * **Herencia y Polimorfismo:** `LuxuryVehicle` extiende de `Vehicle`, redefiniendo el cálculo de tarifa diaria y agregando recargos específicos.
-  * **Manejo de Fechas Inmutables:** Uso exclusivo de `java.time.LocalDate` y `ChronoUnit` para cálculos cronológicos precisos sin inconsistencias horarias.
-* **Trazabilidad 3FN y Base de Datos:**
-  * Nomenclatura, estados y tarifas sincronizados de forma matemática con el script `Fase 4/vehicle_rental.sql`.
+| **Login** | `HU-00` | `RF-00` | `users` | Autenticación con roles `ADMIN`, `EMPLOYEE`, `CASHIER`. |
+| **Flota** | `HU-01`, `HU-02` | `RF-01`, `RF-02` | `vehicles`, `vehicle_types` | CRUD de vehículos y búsqueda predictiva con coincidencia parcial. |
+| **Baja Lógica** | `HU-03` | `RF-01` | `vehicles.status` | Desactivación lógica a estado `INACTIVE` con modal protector. |
+| **Clientes** | `HU-04`, `HU-05` | `RF-03` | `customers` | Registro y consulta con cédula, teléfono y dirección. |
+| **Contratos** | `HU-06`, `HU-07` | `RF-04`, `RF-08` | `rentals` | Creación de contrato con fechas y extensión de días pactados. |
+| **Devoluciones** | `HU-08` | `RF-05` | `rentals.return_date` | Cierre de contrato y retorno del vehículo a `AVAILABLE`. |
+| **Penalizaciones**| `HU-09` | `RF-06` | `penalties` | Detección automática de mora y cobro de penalización ($50.000 COP/d). |
+| **Facturación** | `HU-10` | `RF-07` | `invoices`, `v_invoice_totals` | Liquidación con desglose de IVA 19% y formato de recibo formal. |
