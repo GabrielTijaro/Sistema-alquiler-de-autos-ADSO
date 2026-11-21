@@ -53,9 +53,8 @@
 </head>
 <body class="bg-background text-on-surface font-sans antialiased selection:bg-primary-fixed selection:text-primary">
 
-  <!-- ========================================== -->
-  <!-- VISTA 1: INICIO DE SESIÓN (LOGIN HU-00)     -->
-  <!-- ========================================== -->
+  
+  
   <div id="loginView" class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-gradient-to-br from-primary-fixed/20 via-background to-surface-container-high/40">
     <div class="w-full max-w-md bg-surface rounded-2xl shadow-xl border border-outline-variant/40 p-8 relative z-10">
       <div class="flex items-center gap-3 mb-6">
@@ -119,15 +118,12 @@
     </div>
   </div>
 
-  <!-- ========================================== -->
-  <!-- VISTA 2: APLICACIÓN PRINCIPAL (APP SHELL)   -->
-  <!-- ========================================== -->
+  
+  
   <div id="appShell" class="hidden min-h-screen flex flex-col">
 
-    <!-- Backdrop Móvil -->
     <div id="sidebarBackdrop" onclick="toggleSidebar(false)" class="hidden fixed inset-0 bg-on-surface/40 backdrop-blur-xs z-30 md:hidden"></div>
 
-    <!-- Barra Lateral (Sidebar Drawer) -->
     <aside id="sidebar" class="fixed top-0 left-0 bottom-0 w-[260px] bg-surface border-r border-outline-variant/40 flex flex-col z-40 transition-transform duration-200 -translate-x-full md:translate-x-0">
       <div class="h-16 px-4 flex items-center justify-between border-b border-outline-variant/30">
         <div class="flex items-center gap-2.5">
@@ -171,7 +167,6 @@
         </button>
       </nav>
 
-      <!-- Resumen de Sede en la parte inferior -->
       <div class="p-3 border-t border-outline-variant/30 bg-surface-container-low/50">
         <div class="flex items-center justify-between text-xs">
           <div>
@@ -183,10 +178,8 @@
       </div>
     </aside>
 
-    <!-- Contenedor Principal (con margen izquierdo para el sidebar en desktop) -->
     <div class="pl-0 md:pl-[260px] flex-1 flex flex-col">
 
-      <!-- Header Superior -->
       <header class="h-16 bg-surface/95 backdrop-blur-md border-b border-outline-variant/40 px-4 md:px-8 flex items-center justify-between sticky top-0 z-20 shadow-xs">
         <div class="flex items-center gap-3">
           <button onclick="toggleSidebar(true)" class="md:hidden p-2 rounded-lg text-on-surface hover:bg-surface-container">
@@ -212,14 +205,12 @@
         </div>
       </header>
 
-      <!-- Área de Contenido Dinámico -->
       <main class="flex-1 p-4 md:p-8 max-w-7xl w-full mx-auto space-y-6">
 
-        <!-- ===================================== -->
-        <!-- SECCIÓN 1: DASHBOARD                  -->
-        <!-- ===================================== -->
+        
+        
         <section id="tab-dashboard" class="space-y-6">
-          <!-- Alerta de Operación -->
+          
           <div id="moraAlertBanner" class="hidden p-4 rounded-xl bg-error-container text-on-error-container border border-error/30 flex items-center justify-between shadow-xs">
             <div class="flex items-center gap-3">
               <span class="material-symbols-outlined text-2xl animate-pulse">warning</span>
@@ -233,7 +224,6 @@
             </button>
           </div>
 
-          <!-- Tarjetas KPI -->
           <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <div class="bg-surface p-5 rounded-xl border border-outline-variant/40 shadow-xs flex items-center gap-4">
               <div class="w-12 h-12 rounded-xl bg-primary-fixed text-primary flex items-center justify-center">
@@ -273,7 +263,6 @@
             </div>
           </div>
 
-          <!-- Acciones Rápidas -->
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <button onclick="openNewRentalModal()" class="p-4 rounded-xl bg-primary text-on-primary flex items-center gap-3 hover:bg-primary-container transition-all shadow-sm">
               <span class="material-symbols-outlined text-2xl">add_circle</span>
@@ -298,7 +287,6 @@
             </button>
           </div>
 
-          <!-- Tabla de Actividad Reciente -->
           <div class="bg-surface rounded-xl border border-outline-variant/40 overflow-hidden shadow-xs">
             <div class="p-4 border-b border-outline-variant/30 flex items-center justify-between">
               <h3 class="font-bold text-sm text-on-surface">Alquileres Recientes en Operación</h3>
@@ -317,16 +305,15 @@
                   </tr>
                 </thead>
                 <tbody id="dashboardRentalsTable" class="divide-y divide-outline-variant/20">
-                  <!-- Se llena dinámicamente -->
+                  
                 </tbody>
               </table>
             </div>
           </div>
         </section>
 
-        <!-- ===================================== -->
-        <!-- SECCIÓN 2: GESTIÓN DE FLOTA (HU-01/03)-->
-        <!-- ===================================== -->
+        
+        
         <section id="tab-fleet" class="hidden space-y-4">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
@@ -339,7 +326,6 @@
             </button>
           </div>
 
-          <!-- Filtros de búsqueda (LIKE) -->
           <div class="bg-surface p-3.5 rounded-xl border border-outline-variant/40 flex flex-col sm:flex-row gap-3 items-center justify-between shadow-xs">
             <div class="relative w-full sm:w-80">
               <span class="material-symbols-outlined absolute left-3 top-2.5 text-on-surface-variant text-lg">search</span>
@@ -356,7 +342,6 @@
             </div>
           </div>
 
-          <!-- Tabla de Vehículos -->
           <div class="bg-surface rounded-xl border border-outline-variant/40 overflow-hidden shadow-xs">
             <div class="overflow-x-auto">
               <table class="w-full text-left text-xs">
@@ -371,16 +356,15 @@
                   </tr>
                 </thead>
                 <tbody id="fleetTableBody" class="divide-y divide-outline-variant/20">
-                  <!-- Dinámico -->
+                  
                 </tbody>
               </table>
             </div>
           </div>
         </section>
 
-        <!-- ===================================== -->
-        <!-- SECCIÓN 3: CLIENTES (HU-04, HU-05)    -->
-        <!-- ===================================== -->
+        
+        
         <section id="tab-customers" class="hidden space-y-4">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
@@ -411,16 +395,15 @@
                   </tr>
                 </thead>
                 <tbody id="customersTableBody" class="divide-y divide-outline-variant/20">
-                  <!-- Dinámico -->
+                  
                 </tbody>
               </table>
             </div>
           </div>
         </section>
 
-        <!-- ===================================== -->
-        <!-- SECCIÓN 4: ALQUILERES (HU-06 A HU-09) -->
-        <!-- ===================================== -->
+        
+        
         <section id="tab-rentals" class="hidden space-y-4">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
@@ -448,16 +431,15 @@
                   </tr>
                 </thead>
                 <tbody id="rentalsTableBody" class="divide-y divide-outline-variant/20">
-                  <!-- Dinámico -->
+                  
                 </tbody>
               </table>
             </div>
           </div>
         </section>
 
-        <!-- ===================================== -->
-        <!-- SECCIÓN 5: FACTURACIÓN (HU-10)       -->
-        <!-- ===================================== -->
+        
+        
         <section id="tab-invoices" class="hidden space-y-4">
           <div>
             <h3 class="font-bold text-lg text-on-surface">Módulo de Facturación y Liquidación</h3>
@@ -480,7 +462,7 @@
                   </tr>
                 </thead>
                 <tbody id="invoicesTableBody" class="divide-y divide-outline-variant/20">
-                  <!-- Dinámico -->
+                  
                 </tbody>
               </table>
             </div>
@@ -491,11 +473,9 @@
     </div>
   </div>
 
-  <!-- ============================================================== -->
-  <!-- MODALES FUNCIONALES                                            -->
-  <!-- ============================================================== -->
+  
 
-  <!-- Modal: Registrar Vehículo (HU-01) -->
+  
   <div id="modalNewVehicle" class="hidden fixed inset-0 bg-on-surface/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-surface rounded-2xl max-w-md w-full p-6 shadow-xl border border-outline-variant/40 space-y-4">
       <div class="flex items-center justify-between border-b border-outline-variant/30 pb-3">
@@ -549,7 +529,6 @@
     </div>
   </div>
 
-  <!-- Modal: Registrar Cliente (HU-04) -->
   <div id="modalNewCustomer" class="hidden fixed inset-0 bg-on-surface/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-surface rounded-2xl max-w-md w-full p-6 shadow-xl border border-outline-variant/40 space-y-4">
       <div class="flex items-center justify-between border-b border-outline-variant/30 pb-3">
@@ -588,7 +567,6 @@
     </div>
   </div>
 
-  <!-- Modal: Crear Nuevo Alquiler (HU-06) -->
   <div id="modalNewRental" class="hidden fixed inset-0 bg-on-surface/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-surface rounded-2xl max-w-lg w-full p-6 shadow-xl border border-outline-variant/40 space-y-4">
       <div class="flex items-center justify-between border-b border-outline-variant/30 pb-3">
@@ -604,13 +582,13 @@
         <div>
           <label class="block font-semibold mb-1">Seleccionar Vehículo Disponible</label>
           <select id="rVehicleSelect" onchange="updateRentalCalc()" required class="w-full px-3 py-2 rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:outline-none bg-surface">
-            <!-- Se llena dinámicamente con autos AVAILABLE -->
+            
           </select>
         </div>
         <div>
           <label class="block font-semibold mb-1">Seleccionar Cliente</label>
           <select id="rCustomerSelect" required class="w-full px-3 py-2 rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:outline-none bg-surface">
-            <!-- Se llena con clientes -->
+            
           </select>
         </div>
         <div class="grid grid-cols-2 gap-2">
@@ -624,7 +602,6 @@
           </div>
         </div>
 
-        <!-- Resumen de liquidación previa -->
         <div class="p-3 bg-surface-container-low rounded-xl border border-outline-variant/30 space-y-1">
           <div class="flex justify-between">
             <span class="text-on-surface-variant">Días calculados:</span>
@@ -648,7 +625,6 @@
     </div>
   </div>
 
-  <!-- Modal: Dar de Baja Vehículo (HU-03) -->
   <div id="modalDeactivate" class="hidden fixed inset-0 bg-on-surface/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-surface rounded-2xl max-w-sm w-full p-6 shadow-xl border border-outline-variant/40 text-center space-y-4">
       <div class="w-12 h-12 rounded-full bg-error-container text-error mx-auto flex items-center justify-center">
@@ -668,7 +644,6 @@
     </div>
   </div>
 
-  <!-- Modal: Registrar Devolución y Mora (HU-08 / HU-09) -->
   <div id="modalReturn" class="hidden fixed inset-0 bg-on-surface/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-surface rounded-2xl max-w-md w-full p-6 shadow-xl border border-outline-variant/40 space-y-4">
       <div class="flex items-center justify-between border-b border-outline-variant/30 pb-3">
@@ -694,7 +669,6 @@
           <input type="date" id="retActualDate" onchange="recalculateReturnMora()" class="w-full px-3 py-2 rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:outline-none"/>
         </div>
 
-        <!-- Banner de Mora Dinámica -->
         <div id="retMoraBanner" class="p-3 rounded-xl bg-error-container text-on-error-container border border-error/30 space-y-1">
           <div class="flex items-center gap-1.5 font-bold">
             <span class="material-symbols-outlined text-sm">warning</span>
@@ -725,11 +699,9 @@
     </div>
   </div>
 
-  <!-- Modal: Factura Electrónica Formal (HU-10) -->
   <div id="modalInvoice" class="hidden fixed inset-0 bg-on-surface/50 backdrop-blur-xs z-50 flex items-center justify-center p-4 overflow-y-auto">
     <div id="invoiceModal" class="bg-surface rounded-2xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-outline-variant/40 space-y-4 my-8">
-      
-      <!-- Encabezado Corporativo -->
+
       <div class="border-b-2 border-primary/20 pb-4 flex items-start justify-between">
         <div>
           <div class="flex items-center gap-2">
@@ -748,7 +720,6 @@
         </div>
       </div>
 
-      <!-- Datos del Cliente y Vehículo -->
       <div class="grid grid-cols-2 gap-4 text-xs bg-surface-container-low p-3.5 rounded-xl border border-outline-variant/30">
         <div>
           <span class="block text-[10px] uppercase font-bold text-outline">Datos del Cliente:</span>
@@ -764,7 +735,6 @@
         </div>
       </div>
 
-      <!-- Desglose de Cobros -->
       <div class="text-xs space-y-2">
         <table class="w-full text-left">
           <thead class="border-b border-outline-variant/40 text-[10px] uppercase text-outline font-bold">
@@ -797,7 +767,6 @@
           </tbody>
         </table>
 
-        <!-- Totales Finales -->
         <div class="border-t-2 border-outline-variant/40 pt-2 space-y-1">
           <div class="flex justify-between text-on-surface-variant">
             <span>Subtotal:</span>
@@ -814,7 +783,6 @@
         </div>
       </div>
 
-      <!-- Footer y Acciones -->
       <div class="pt-3 border-t border-outline-variant/30 text-center text-[10px] text-on-surface-variant space-y-1">
         <p>Factura por computador habilitada mediante resolución DIAN vigente • Neiva, Huila</p>
       </div>
@@ -830,13 +798,9 @@
     </div>
   </div>
 
-  <!-- ============================================================== -->
-  <!-- LÓGICA DE NEGOCIO Y PERSISTENCIA (JAVASCRIPT / LOCALSTORAGE)   -->
-  <!-- ============================================================== -->
+  
+  
   <script>
-    // -------------------------------------------------------------
-    // ESTADO GLOBAL Y DATOS SEMILLA (Matching vehicle_rental.sql)
-    // -------------------------------------------------------------
     const USERS = [
       { username: 'lmendez', pass: 'admin123', name: 'Laura Méndez', role: 'ADMIN' },
       { username: 'crojas',  pass: 'emp123',   name: 'Carlos Rojas', role: 'EMPLOYEE' },
@@ -918,9 +882,6 @@
       return '$ ' + Number(val).toLocaleString('es-CO') + ' COP';
     }
 
-    // -------------------------------------------------------------
-    // AUTENTICACIÓN (LOGIN HU-00 / RBAC)
-    // -------------------------------------------------------------
     function fillLogin(u, p) {
       document.getElementById('loginUsername').value = u;
       document.getElementById('loginPassword').value = p;
@@ -958,9 +919,7 @@
       document.getElementById('loginPassword').value = '';
     }
 
-    // -------------------------------------------------------------
     // NAVEGACIÓN Y TABS
-    // -------------------------------------------------------------
     function switchTab(tabId) {
       const tabs = ['dashboard', 'fleet', 'customers', 'rentals', 'invoices'];
       tabs.forEach(t => {
@@ -1004,9 +963,7 @@
       document.getElementById(modalId).classList.add('hidden');
     }
 
-    // -------------------------------------------------------------
     // RENDERIZADO Y LÓGICA DE VISTAS
-    // -------------------------------------------------------------
     function refreshAllViews() {
       renderDashboard();
       renderFleetTable();
@@ -1072,7 +1029,6 @@
       });
     }
 
-    // FLOTA DE VEHÍCULOS (HU-01, HU-02, HU-03)
     function renderFleetTable() {
       const q = (document.getElementById('fleetSearchInput').value || '').toLowerCase().trim();
       const statusF = document.getElementById('fleetStatusFilter').value;
@@ -1371,7 +1327,6 @@
       }
     }
 
-    // DEVOLUCIONES Y MORA (HU-08, HU-09)
     function promptReturn(rentalId) {
       const r = rentals.find(x => x.id === rentalId);
       if (!r) return;
@@ -1435,7 +1390,6 @@
       viewInvoice(r.id);
     }
 
-    // FACTURACIÓN (HU-10)
     function renderInvoicesTable() {
       const tbody = document.getElementById('invoicesTableBody');
       tbody.innerHTML = '';

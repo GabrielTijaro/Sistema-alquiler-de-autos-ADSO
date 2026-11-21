@@ -27,9 +27,6 @@ public class Alquiler_autosv2 {
         }
     }
 
-    // ==========================================
-    // HU-00 / RF-00: MODULO DE AUTENTICACION
-    // ==========================================
     static void loginMenu() {
         System.out.println("\n>>> INICIO DE SESION (HU-00) <<<");
         System.out.println("Usuarios predeterminados para evaluacion:");
@@ -58,9 +55,7 @@ public class Alquiler_autosv2 {
         }
     }
 
-    // ==========================================
     // MENÚ PRINCIPAL DINÁMICO SEGÚN ROL (RBAC)
-    // ==========================================
     static void mainRoleMenu() {
         System.out.println("\n=============================================================");
         System.out.println("  NEIVA RENT A CAR | Sesion activa: " + currentUser.getFullName() + " (" + currentUser.getRole() + ")");
@@ -151,9 +146,6 @@ public class Alquiler_autosv2 {
         System.exit(0);
     }
 
-    // ==========================================
-    // 1. GESTION DE FLOTA (HU-01, HU-02, HU-03)
-    // ==========================================
     static void vehicleMenu() {
         int opt;
         do {
@@ -293,9 +285,6 @@ public class Alquiler_autosv2 {
         if (count == 0) System.out.println("No hay vehiculos disponibles en este momento.");
     }
 
-    // ==========================================
-    // 2. GESTION DE CLIENTES (HU-04, HU-05)
-    // ==========================================
     static void customerMenu() {
         int opt;
         do {
@@ -367,9 +356,6 @@ public class Alquiler_autosv2 {
         }
     }
 
-    // ==========================================
-    // 3. OPERACIONES DE ALQUILER (HU-06, HU-07)
-    // ==========================================
     static void rentalOperationsMenu() {
         int opt;
         do {
@@ -476,9 +462,6 @@ public class Alquiler_autosv2 {
         }
     }
 
-    // ==========================================
-    // 4. DEVOLUCIONES Y MORA (HU-08, HU-09)
-    // ==========================================
     static void returnsMenu() {
         System.out.println("\n[Registrar Devolucion de Vehiculo - HU-08 / HU-09]");
         System.out.print("Placa del vehiculo a devolver: "); String plate = sc.nextLine().trim().toUpperCase();
@@ -517,9 +500,6 @@ public class Alquiler_autosv2 {
         }
     }
 
-    // ==========================================
-    // 5. FACTURACION (HU-10 / RF-07)
-    // ==========================================
     static void billingMenu() {
         System.out.println("\n[Liquidacion y Facturacion - HU-10]");
         System.out.print("Placa del vehiculo a facturar: "); String plate = sc.nextLine().trim().toUpperCase();
@@ -589,9 +569,7 @@ public class Alquiler_autosv2 {
         System.out.println("Resolucion DIAN habilitada | Transaccion completada con exito\n");
     }
 
-    // ==========================================
     // 6. REPORTES GENERALES
-    // ==========================================
     static void reportsMenu() {
         System.out.println("\n=== REPORTE GENERAL CONSOLIDADO - NEIVA RENT A CAR ===");
         System.out.println("\n1. Flota de Vehiculos (" + company.getVehicles().size() + " registros):");
@@ -611,7 +589,6 @@ public class Alquiler_autosv2 {
         System.out.println("=======================================================");
     }
 
-    // UTILIDADES DE ENTRADA CON SCANNER
     static int readInt(String msg) {
         System.out.print(msg);
         while (!sc.hasNextInt()) {

@@ -22,16 +22,13 @@ public class Company {
     }
 
     public void loadSeedData() {
-        // Usuarios del sistema (matching Fase 4 users table)
         users.add(new User("lmendez", "admin123", "Laura Méndez", "ADMIN"));
         users.add(new User("crojas",  "emp123",   "Carlos Rojas", "EMPLOYEE"));
         users.add(new User("dtorres", "cash123",  "Diana Torres", "CASHIER"));
 
-        // Clientes iniciales (matching Fase 4 customers table)
         customers.add(new Customer("1075634521", "Andrés Felipe Cuellar", "3124567890", "Cra 5 # 10-20, Neiva"));
         customers.add(new Customer("52741963",   "Marcela Rincón",        "3009876543", "Calle 8 # 3-14, Neiva"));
 
-        // Flota de vehículos (matching Fase 4 vehicles table)
         Vehicle v1 = new Vehicle("ABC123", "Chevrolet", "Spark", 90000.0, "Económico");
         Vehicle v2 = new Vehicle("DEF456", "Mazda", "CX-30", 150000.0, "Gama media");
         LuxuryVehicle v3 = new LuxuryVehicle("GHI789", "BMW", "Serie 4", 350000.0, 100000.0);
